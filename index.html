@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PokéRévisions – Aventure CE2</title>
+<style>
+:root{
+  --red:#e53935;--red2:#ff7043;--blue:#3b82f6;--green:#43a047;--yellow:#ffd54f;
+  --ink:#203040;--muted:#617283;--paper:#fffdf7;--panel:#ffffff;--line:#dbe6ee;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:var(--ink);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12px 12px,#ffffff70 2px,transparent 3px) 0 0/24px 24px,
+    linear-gradient(135deg,#dff3ff,#fff6cf);
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+header{
+  position:sticky;top:0;z-index:20;background:linear-gradient(90deg,var(--red),var(--red2));
+  color:#fff;box-shadow:0 5px 18px #0002;
+}
+.topbar{max-width:1180px;margin:auto;padding:12px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.pokeball{width:52px;height:52px;border-radius:50%;border:6px solid #222;background:linear-gradient(#ef4444 0 45%,#222 45% 56%,#fff 56%);position:relative;flex:0 0 auto}
+.pokeball:after{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;border:5px solid #222;left:8px;top:8px}
+.brand h1{margin:0;font-size:clamp(1.35rem,3vw,2.1rem)}
+.brand small{opacity:.95}
+.stats{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:5px;background:#ffffffdd;color:#263238;border-radius:999px;padding:8px 11px;font-weight:800}
+main{max-width:1180px;margin:22px auto;padding:0 16px 42px}
+.card{background:var(--paper);border:3px solid #fff;border-radius:22px;padding:20px;box-shadow:0 12px 30px #2342;margin-bottom:20px}
+.hero{display:grid;grid-template-columns:1.5fr 1fr;gap:22px;align-items:center}
+.hero-art{text-align:center;font-size:4.8rem;filter:drop-shadow(0 8px 6px #0002)}
+h2,h3{margin-top:0}
+.actions,.tabs,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{
+  border:0;border-radius:14px;padding:12px 16px;font-weight:900;background:var(--blue);color:#fff;
+  box-shadow:0 5px 0 #2363aa;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #2363aa}
+.btn.secondary{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:none}
+.btn.green{background:var(--green);box-shadow:0 5px 0 #2f7a35}
+.btn.yellow{background:var(--yellow);color:#4b3b00;box-shadow:0 5px 0 #b79519}
+.btn.red{background:var(--red);box-shadow:0 5px 0 #a72222}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.topic,.starter{
+  border:2px solid var(--line);background:#fff;border-radius:16px;padding:14px;text-align:left;
+  color:var(--ink);font-weight:800;min-height:84px;box-shadow:none;
+}
+.topic:hover,.starter:hover{border-color:var(--blue);transform:translateY(-1px)}
+.topic.done{border-color:#74c67a;background:#f0fff2}
+.topic.locked{opacity:.55;filter:grayscale(.35)}
+.icon{font-size:1.6rem;margin-right:8px}
+.lesson{
+  background:#f2f8ff;border-left:6px solid var(--blue);border-radius:16px;padding:16px;margin:14px 0;
+}
+.example{
+  background:#fff7df;border-left:6px solid var(--yellow);border-radius:14px;padding:14px;margin-top:10px;
+}
+.progress-track{height:14px;background:#e8eef2;border-radius:999px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#43a047,#8bc34a);transition:.3s}
+.question{font-size:1.35rem;font-weight:900;margin:18px 0}
+.answer-area{display:flex;gap:10px;flex-wrap:wrap}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;width:100%}
+.choice{border:2px solid #cad9e3;background:#fff;border-radius:14px;padding:12px;font-weight:800;color:var(--ink)}
+.choice.selected{border-color:var(--blue);background:#eaf5ff}
+input[type=text],input[type=number]{
+  min-width:240px;border:3px solid #c9d7e0;border-radius:14px;padding:12px;background:#fff;
+}
+.feedback{display:none;margin-top:14px;padding:15px;border-radius:14px;font-weight:800;line-height:1.45}
+.feedback.ok{display:block;background:#e8f8eb;color:#1c6a29}
+.feedback.ko{display:block;background:#ffebee;color:#9c2626}
+.correction-steps{margin-top:10px;background:#fff;border-radius:12px;padding:12px;color:var(--ink);font-weight:600}
+.starter-card{display:grid;grid-template-columns:90px 1fr;gap:12px;align-items:center}
+.sprite{font-size:4.5rem;text-align:center}
+.xp-track{height:12px;background:#e5edf2;border-radius:999px;overflow:hidden}
+.xp-bar{height:100%;background:linear-gradient(90deg,#7e57c2,#ab47bc)}
+.badge-list{display:flex;gap:10px;flex-wrap:wrap}
+.badge{background:#fff;border:2px dashed #c7d3db;border-radius:16px;padding:12px;min-width:150px;text-align:center}
+.badge.unlocked{border-style:solid;border-color:#f2b705;background:#fff9dd}
+.report-row{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:8px;padding:9px 0;border-bottom:1px solid #e7ecef}
+.arena{background:linear-gradient(135deg,#fff4dc,#ffe0b2)}
+.big{font-size:1.25rem}
+.muted{color:var(--muted)}
+.notice{font-size:.82rem;color:var(--muted)}
+.clock{width:150px;height:150px;border:8px solid #333;border-radius:50%;position:relative;background:#fff;margin:12px auto}
+.clock:before{content:"12";position:absolute;top:3px;left:58px;font-weight:bold}
+.clock:after{content:"6";position:absolute;bottom:3px;left:64px;font-weight:bold}
+.hand{position:absolute;left:67px;top:67px;transform-origin:bottom center;background:#333;border-radius:5px}
+.hour{width:7px;height:42px;margin-top:-42px}
+.minute{width:4px;height:56px;margin-top:-56px}
+.grid-demo{display:grid;grid-template-columns:repeat(5,42px);grid-template-rows:repeat(5,42px);gap:2px;margin:10px auto;width:max-content}
+.grid-demo div{background:#fff;border:1px solid #90a4ae;display:flex;align-items:center;justify-content:center;font-weight:900}
+.shape{display:inline-block;margin:8px;vertical-align:middle}.square{width:70px;height:70px;border:5px solid var(--blue)}.rectangle{width:110px;height:65px;border:5px solid var(--green)}.triangle{width:0;height:0;border-left:45px solid transparent;border-right:45px solid transparent;border-bottom:78px solid var(--yellow)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.stats{margin-left:0}.report-row{grid-template-columns:1fr}.question{font-size:1.15rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="pokeball" aria-hidden="true"></div>
+    <div class="brand"><h1>PokéRévisions</h1><small>Aventure éducative CE2</small></div>
+    <div class="stats">
+      <span class="pill">⭐ <span id="stars">0</span></span>
+      <span class="pill">⚡ XP <span id="xp">0</span></span>
+      <span class="pill">🏅 <span id="badgeCount">0</span></span>
+    </div>
+  </div>
+</header>
+
+<main>
+<section id="welcome" class="card">
+  <div class="hero">
+    <div>
+      <h2>Prêt pour une aventure de révisions ?</h2>
+      <p>Choisis ton compagnon, lis une petite leçon, entraîne-toi, gagne de l’XP et affronte les arènes de français et de mathématiques.</p>
+      <div class="actions">
+        <button class="btn" onclick="showScreen('starter')">Choisir mon compagnon</button>
+        <button class="btn secondary" onclick="showScreen('dashboard')">Continuer l’aventure</button>
+      </div>
+      <p class="notice">Création éducative non officielle. Aucun visuel, son ou fichier officiel Pokémon n’est utilisé.</p>
+    </div>
+    <div class="hero-art">⚡🔥💧🌿</div>
+  </div>
+</section>
+
+<section id="starter" class="card hidden">
+  <h2>Choisis ton compagnon de départ</h2>
+  <div class="grid">
+    <button class="starter" onclick="chooseStarter('Pikachu','⚡','Raichu')"><div class="starter-card"><div class="sprite">⚡</div><div><strong>Pikachu</strong><br><span class="muted">Évolue à 100 XP</span></div></div></button>
+    <button class="starter" onclick="chooseStarter('Salamèche','🔥','Reptincel')"><div class="starter-card"><div class="sprite">🔥</div><div><strong>Salamèche</strong><br><span class="muted">Évolue à 100 XP</span></div></div></button>
+    <button class="starter" onclick="chooseStarter('Carapuce','💧','Carabaffe')"><div class="starter-card"><div class="sprite">💧</div><div><strong>Carapuce</strong><br><span class="muted">Évolue à 100 XP</span></div></div></button>
+    <button class="starter" onclick="chooseStarter('Bulbizarre','🌿','Herbizarre')"><div class="starter-card"><div class="sprite">🌿</div><div><strong>Bulbizarre</strong><br><span class="muted">Évolue à 100 XP</span></div></div></button>
+  </div>
+</section>
+
+<section id="dashboard" class="hidden">
+  <div class="card">
+    <div class="hero">
+      <div>
+        <h2>Ton équipe</h2>
+        <div class="starter-card">
+          <div id="partnerSprite" class="sprite">⚡</div>
+          <div>
+            <div class="big"><strong id="partnerName">Pikachu</strong></div>
+            <div>Niveau <span id="partnerLevel">1</span> • <span id="evolutionText">Prochaine évolution à 100 XP</span></div>
+            <div class="xp-track" style="margin-top:8px"><div id="partnerXpBar" class="xp-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn secondary" onclick="showScreen('progress')">Voir les progrès</button>
+        <button class="btn secondary" onclick="showScreen('badges')">Voir les badges</button>
+        <button class="btn secondary" onclick="showScreen('starter')">Changer de compagnon</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button id="tab-fr" class="btn" onclick="showSubject('fr')">📘 Français</button>
+      <button id="tab-math" class="btn green" onclick="showSubject('math')">📗 Maths</button>
+    </div>
+    <div id="topics" class="grid" style="margin-top:14px"></div>
+  </div>
+
+  <div class="card arena">
+    <h2>🏟️ Combats d’arène</h2>
+    <p>Une arène contient 10 questions mélangées. Elle se débloque après avoir terminé au moins 3 chapitres de la matière.</p>
+    <div class="actions">
+      <button id="arenaFrBtn" class="btn red" onclick="startArena('fr')">Arène de Français</button>
+      <button id="arenaMathBtn" class="btn green" onclick="startArena('math')">Arène de Maths</button>
+    </div>
+  </div>
+</section>
+
+<section id="lessonScreen" class="card hidden">
+  <div class="actions">
+    <button class="btn secondary" onclick="showScreen('dashboard')">← Retour</button>
+    <span class="pill" id="lessonTitle"></span>
+  </div>
+  <div id="lessonContent" class="lesson"></div>
+  <div class="actions">
+    <button class="btn yellow" onclick="startPractice()">Commencer les exercices</button>
+    <button class="btn secondary" onclick="speakLesson()">🔊 Lire la leçon</button>
+  </div>
+</section>
+
+<section id="quiz" class="card hidden">
+  <div class="row">
+    <button class="btn secondary" onclick="quitQuiz()">← Quitter</button>
+    <span class="pill" id="quizTitle"></span>
+    <span class="pill">Question <span id="qnum">1</span>/<span id="qtotal">5</span></span>
+    <span class="pill">Score <span id="score">0</span></span>
+  </div>
+  <div class="progress-track" style="margin-top:14px"><div id="progressBar" class="progress-bar"></div></div>
+  <div id="visual"></div>
+  <div id="question" class="question"></div>
+  <div class="actions" style="margin-bottom:10px"><button class="btn secondary" onclick="speakQuestion()">🔊 Lire la consigne</button></div>
+  <div id="answerArea" class="answer-area"></div>
+  <div id="feedback" class="feedback"></div>
+  <div class="actions" style="margin-top:16px">
+    <button id="validateBtn" class="btn yellow" onclick="validateAnswer()">Valider</button>
+    <button id="nextBtn" class="btn green hidden" onclick="nextQuestion()">Question suivante</button>
+  </div>
+</section>
+
+<section id="result" class="card hidden">
+  <div id="resultIcon" class="hero-art">🎉</div>
+  <h2 id="resultTitle">Session terminée !</h2>
+  <p class="question">Score : <span id="finalScore">0</span>/<span id="finalTotal">5</span></p>
+  <p id="resultMessage"></p>
+  <div class="actions">
+    <button id="replayBtn" class="btn green" onclick="replayLast()">Rejouer</button>
+    <button class="btn secondary" onclick="showScreen('dashboard')">Retour aux chapitres</button>
+  </div>
+</section>
+
+<section id="badges" class="card hidden">
+  <div class="actions"><button class="btn secondary" onclick="showScreen('dashboard')">← Retour</button></div>
+  <h2>Collection de badges</h2>
+  <div id="badgeList" class="badge-list"></div>
+</section>
+
+<section id="progress" class="card hidden">
+  <div class="actions"><button class="btn secondary" onclick="showScreen('dashboard')">← Retour</button><button class="btn red" onclick="resetAll()">Réinitialiser</button></div>
+  <h2>Suivi des progrès</h2>
+  <div id="progressReport"></div>
+</section>
+</main>
+
+<footer>Les progrès sont enregistrés uniquement dans ce navigateur.</footer>
+
+<script>
+const topics={
+fr:[
+["Antonymes et synonymes","🔁","syn"],["Le son [s] et le son [g]","🔊","sounds"],["L’infinitif du verbe","🧩","inf"],
+["L’ordre alphabétique","🔤","alpha"],["Le présent","⏱️","present"],["L’accord sujet-verbe","🤝","sv"],
+["L’écriture cursive","✍️","cursive"],["Les mots de la même famille","🌳","family"],["L’imparfait","🕰️","imperfect"],
+["L’accord dans le groupe nominal","🧱","gn"],["La lettre finale muette","🤫","silent"],["Le futur","🚀","future"]],
+math:[
+["Les nombres jusqu’à 999 (1)","🔢","n999a"],["Les nombres jusqu’à 999 (2)","🧮","n999b"],["L’addition avec retenue","➕","add"],
+["Carré, rectangle, triangle","📐","shapes"],["La soustraction","➖","sub"],["Résoudre des problèmes (1)","🧠","prob1"],
+["Symétrie et solides","🪞","solid"],["Les unités de longueur","📏","length"],["La multiplication","✖️","mult"],
+["Lire l’heure","🕒","time"],["Résoudre des problèmes (2)","💡","prob2"],["Se repérer dans un quadrillage","🗺️","grid"]]};
+const lessons={
+syn:["Un synonyme est un mot qui a un sens proche. Un antonyme est un mot de sens contraire.","Exemple : heureux est un synonyme de content. Petit est un antonyme de grand."],
+sounds:["La lettre c fait souvent le son [s] devant e, i ou y. La lettre g fait souvent le son [j] devant e, i ou y.","Exemple : cerise → [s], girafe → [j], camion → [k], gâteau → [g]."],
+inf:["L’infinitif est le nom du verbe. Il ne change pas selon la personne.","Exemple : nous chantons → chanter ; ils finissent → finir."],
+alpha:["Pour ranger des mots, on compare d’abord leur première lettre, puis la deuxième si nécessaire.","Exemple : chat, cheval, chien."],
+present:["Le présent sert à parler de ce qui se passe maintenant ou d’une habitude.","Exemple : je joue, nous jouons, ils jouent."],
+sv:["Le verbe s’accorde avec son sujet : singulier avec singulier, pluriel avec pluriel.","Exemple : Le chien court. Les chiens courent."],
+cursive:["En écriture cursive, les lettres sont généralement liées. On garde une taille régulière et on respecte les lignes.","Exemple : écris lentement, sans lever le crayon entre chaque lettre quand c’est possible."],
+family:["Des mots de la même famille ont une partie commune et un sens lié.","Exemple : fleur, fleuriste, fleurir."],
+imperfect:["L’imparfait sert souvent à raconter une habitude ou une description dans le passé.","Terminaisons fréquentes : -ais, -ais, -ait, -ions, -iez, -aient."],
+gn:["Dans un groupe nominal, le déterminant, le nom et l’adjectif s’accordent en genre et en nombre.","Exemple : une petite maison ; des petites maisons."],
+silent:["Certaines lettres finales ne se prononcent pas. On peut chercher un mot de la même famille pour les retrouver.","Exemple : grand → grande, donc le d final existe."],
+future:["Le futur sert à parler de ce qui se passera plus tard.","Terminaisons fréquentes : -ai, -as, -a, -ons, -ez, -ont."],
+n999a:["Un nombre jusqu’à 999 contient des centaines, des dizaines et des unités.","Exemple : 347 = 3 centaines, 4 dizaines et 7 unités."],
+n999b:["On peut décomposer un nombre pour mieux le comprendre.","Exemple : 582 = 500 + 80 + 2."],
+add:["Pour une addition posée, on aligne unités, dizaines et centaines. Si une colonne dépasse 9, on écrit l’unité et on reporte une retenue.","Exemple : 278 + 156 = 434."],
+shapes:["Un carré a 4 côtés égaux. Un rectangle a 4 angles droits. Un triangle a 3 côtés.","Observe le nombre de côtés et les angles."],
+sub:["Pour une soustraction posée, on aligne les chiffres. Si le chiffre du haut est trop petit, on échange une dizaine contre 10 unités.","Exemple : 402 − 178 = 224."],
+prob1:["Dans un problème, repère ce qu’on cherche, les nombres utiles et l’opération.","Si on gagne ou ajoute des objets, on utilise souvent une addition."],
+solid:["Un solide est un objet en volume. Une figure symétrique peut être pliée en deux parties qui se superposent.","Exemple : un cube a 6 faces carrées."],
+length:["Les unités courantes sont le millimètre, le centimètre, le mètre et le kilomètre.","1 m = 100 cm. 1 km = 1 000 m."],
+mult:["Multiplier, c’est additionner plusieurs fois le même nombre.","Exemple : 4 × 3 = 3 + 3 + 3 + 3 = 12."],
+time:["La petite aiguille indique les heures. La grande aiguille indique les minutes.","Grande aiguille sur 12 : heure pile ; sur 6 : 30 minutes."],
+prob2:["Un problème de groupes égaux utilise souvent une multiplication.","Exemple : 4 carnets à 3 € coûtent 4 × 3 = 12 €."],
+grid:["Dans un quadrillage, on lit d’abord la colonne, puis la ligne.","Exemple : C4 signifie colonne C, ligne 4."]
+};
+const badgeDefs=[
+["first","Premier pas","Terminer une première session","🥉"],
+["perfect","Sans faute","Obtenir 5/5","🌟"],
+["fr3","Dresseur des mots","Terminer 3 chapitres de français","📘"],
+["math3","Dresseur des nombres","Terminer 3 chapitres de maths","📗"],
+["arenaFr","Badge Plume","Réussir l’arène de français","🪶"],
+["arenaMath","Badge Calcul","Réussir l’arène de maths","🧮"],
+["xp100","Évolution","Atteindre 100 XP","✨"]
+];
+let subject="fr",currentTopic=null,questions=[],index=0,score=0,selected=null,answered=false,mode="practice",lastConfig=null;
+const $=id=>document.getElementById(id),rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,pick=a=>a[rand(0,a.length-1)],shuffle=a=>[...a].sort(()=>Math.random()-.5);
+const norm=s=>String(s).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g,"'");
+function getState(){return JSON.parse(localStorage.getItem("pokeRevisionState")||'{"xp":0,"stars":0,"starter":{"name":"Pikachu","icon":"⚡","evolution":"Raichu"},"completed":{},"best":{},"badges":[]}')}
+function saveState(s){localStorage.setItem("pokeRevisionState",JSON.stringify(s));refreshStats()}
+function showScreen(id){["welcome","starter","dashboard","lessonScreen","quiz","result","badges","progress"].forEach(x=>$(x).classList.toggle("hidden",x!==id));if(id==="dashboard")renderDashboard();if(id==="badges")renderBadges();if(id==="progress")renderProgress()}
+function chooseStarter(name,icon,evolution){const s=getState();s.starter={name,icon,evolution};saveState(s);showScreen("dashboard")}
+function refreshStats(){const s=getState();$("stars").textContent=s.stars;$("xp").textContent=s.xp;$("badgeCount").textContent=s.badges.length}
+function renderDashboard(){
+ const s=getState(),evolved=s.xp>=100;
+ $("partnerSprite").textContent=evolved?"✨"+s.starter.icon:s.starter.icon;
+ $("partnerName").textContent=evolved?s.starter.evolution:s.starter.name;
+ $("partnerLevel").textContent=1+Math.floor(s.xp/50);
+ $("evolutionText").textContent=evolved?"Évolution débloquée !":"Prochaine évolution à 100 XP";
+ $("partnerXpBar").style.width=Math.min(100,s.xp)+"%";
+ renderTopics();updateArenaButtons();
+}
+function showSubject(s){subject=s;$("tab-fr").classList.toggle("yellow",s==="fr");$("tab-math").classList.toggle("yellow",s==="math");renderTopics()}
+function renderTopics(){
+ const s=getState();
+ $("topics").innerHTML=topics[subject].map(t=>{const d=s.completed[t[2]];return `<button class="topic ${d?"done":""}" onclick="openLesson('${t[2]}','${t[0].replaceAll("'","\\'")}')"><span class="icon">${t[1]}</span>${t[0]}${d?`<br><small>✅ Meilleur score : ${s.best[t[2]]||0}/5</small>`:""}</button>`}).join("");
+}
+function openLesson(id,title){currentTopic={id,title};$("lessonTitle").textContent=title;const l=lessons[id];$("lessonContent").innerHTML=`<h3>Leçon</h3><p>${l[0]}</p><div class="example"><strong>À retenir :</strong> ${l[1]}</div>`;showScreen("lessonScreen")}
+function speak(text){if(!("speechSynthesis" in window)){alert("La lecture vocale n’est pas disponible sur cet appareil.");return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="fr-FR";u.rate=.9;speechSynthesis.speak(u)}
+function speakLesson(){speak($("lessonContent").innerText)}
+function speakQuestion(){speak($("question").innerText)}
+function startPractice(){mode="practice";lastConfig={mode,id:currentTopic.id,title:currentTopic.title};questions=Array.from({length:5},()=>generate(currentTopic.id));startQuiz(currentTopic.title)}
+function startArena(sub){
+ const s=getState(),count=topics[sub].filter(t=>s.completed[t[2]]).length;if(count<3){alert("Termine d’abord 3 chapitres de cette matière.");return;}
+ mode="arena";subject=sub;lastConfig={mode,sub};const ids=topics[sub].map(t=>t[2]);questions=Array.from({length:10},()=>generate(pick(ids)));startQuiz("Combat d’arène – "+(sub==="fr"?"Français":"Maths"));
+}
+function startQuiz(title){index=0;score=0;selected=null;answered=false;$("quizTitle").textContent=title;$("qtotal").textContent=questions.length;showScreen("quiz");renderQuestion()}
+function quitQuiz(){if(confirm("Quitter cette session ?"))showScreen("dashboard")}
+function mc(question,correct,wrong,explain="",steps="",visual=""){let choices=shuffle([String(correct),...wrong.map(String)]);return{type:"mc",question,correct:String(correct),choices:[...new Set(choices)].slice(0,4),explain,steps,visual}}
+function textq(question,correct,explain="",steps="",visual=""){return{type:"text",question,correct:String(correct),explain,steps,visual}}
+function generate(id){
+ if(id==="syn"){return mc(...pick([["Quel est un synonyme de « content » ?","heureux",["triste","lent","froid"],"Un synonyme a un sens proche."],["Quel est un antonyme de « grand » ?","petit",["haut","géant","large"],"Un antonyme a un sens contraire."],["Quel est un antonyme de « commencer » ?","terminer",["ouvrir","essayer","parler"],"Commencer et terminer sont opposés."]]))}
+ if(id==="sounds"){return mc(...pick([["Dans quel mot la lettre « c » fait-elle le son [s] ?","cerise",["carte","cube","classe"],"Devant e, i ou y, c fait souvent [s]."],["Dans quel mot la lettre « g » fait-elle le son [j] ?","girafe",["gare","gomme","guitare"],"Devant e, i ou y, g fait souvent [j]."],["Dans quel mot la lettre « g » fait-elle le son [g] ?","gâteau",["girafe","gilet","genou"],"Dans gâteau, on entend le son [g]."]]))}
+ if(id==="inf"){return mc(...pick([["Quel est l’infinitif de « nous chantons » ?","chanter",["chantons","chanté","chante"],"L’infinitif est le nom du verbe."],["Quel est l’infinitif de « ils finissent » ?","finir",["finissent","fini","finira"],"On cherche la forme non conjuguée."],["Quel est l’infinitif de « tu prends » ?","prendre",["prends","pris","prendra"],"Tu prends vient du verbe prendre."]]))}
+ if(id==="alpha"){const good=pick(["abricot, banane, cerise","chat, cheval, chien","école, élève, enfant"]);return mc("Quelle liste est dans l’ordre alphabétique ?",good,shuffle(["banane, abricot, cerise","cerise, banane, abricot","chien, chat, cheval"]).filter(x=>x!==good),"On compare les lettres de gauche à droite.")}
+ if(id==="present"){return mc(...pick([["Complète : Nous ___ au parc. (jouer)","jouons",["jouez","jouent","joue"],"Avec nous, on écrit souvent -ons."],["Complète : Tu ___ une histoire. (lire)","lis",["lit","lisez","lisons"],"Avec tu : tu lis."],["Complète : Ils ___ leurs cartables. (prendre)","prennent",["prend","prenez","prenons"],"Avec ils : ils prennent."]]))}
+ if(id==="sv"){return mc(...pick([["Les enfants ___ dans la cour.","jouent",["joue","jouons","jouez"],"Le sujet est pluriel, donc le verbe est au pluriel."],["Le chien ___ très vite.","court",["courent","courons","courez"],"Le sujet est singulier."],["Ma sœur et moi ___ un gâteau.","préparons",["prépare","préparent","préparez"],"Ma sœur et moi = nous."]]))}
+ if(id==="cursive"){const w=pick(["papillon","chocolat","aventure","mercredi","courage"]);return textq(`Recopie en cursive puis tape le mot : ${w}`,w,"Compare les lettres une à une.","Écris le mot lentement, puis vérifie chaque lettre.",`<div style="font-family:cursive;font-size:2.4rem;text-align:center;padding:18px">${w}</div>`)}
+ if(id==="family"){return mc(...pick([["Quel mot est de la même famille que « chant » ?","chanteur",["champ","chance","chat"],"Chant et chanteur ont une partie commune et un sens lié."],["Quel mot est de la même famille que « dent » ?","dentiste",["dedans","danse","dinde"],"Le dentiste soigne les dents."],["Quel mot est de la même famille que « fleur » ?","fleuriste",["fleuve","flèche","flocon"],"Fleur et fleuriste appartiennent à la même famille."]]))}
+ if(id==="imperfect"){return mc(...pick([["Quand j’étais petit, je ___ souvent. (jouer)","jouais",["joue","jouerai","joué"],"À l’imparfait avec je : -ais."],["Nous ___ à l’école. (marcher)","marchions",["marchons","marcherons","marché"],"À l’imparfait avec nous : -ions."],["Ils ___ faim. (avoir)","avaient",["ont","auront","avait"],"À l’imparfait avec ils : -aient."]]))}
+ if(id==="gn"){return mc(...pick([["Choisis le bon groupe nominal.","les petites maisons",["les petit maisons","les petite maison","le petites maisons"],"Tout est au féminin pluriel."],["Choisis le bon groupe nominal.","un grand arbre",["une grand arbre","un grande arbre","des grand arbre"],"Arbre est masculin singulier."],["Choisis le bon groupe nominal.","des chats noirs",["des chat noir","des chats noir","des chat noirs"],"Nom et adjectif sont au pluriel."]]))}
+ if(id==="silent"){return mc(...pick([["Lettre finale muette de « grand » ?","d",["t","s","x"],"On entend le d dans grande."],["Lettre finale muette de « petit » ?","t",["d","s","p"],"On entend le t dans petite."],["Lettre finale muette de « long » ?","g",["c","t","d"],"On entend le g dans longue."]]))}
+ if(id==="future"){return mc(...pick([["Demain, nous ___ au musée. (aller)","irons",["allons","allions","sommes allés"],"Avec nous au futur : irons."],["Tu ___ ton exercice. (finir)","finiras",["finis","finissais","finira"],"Avec tu au futur : -as."],["Ils ___ une cabane. (construire)","construiront",["construisent","construisaient","construira"],"Avec ils au futur : -ont."]]))}
+ if(id==="n999a"){const n=rand(100,999);return mc(`Quel nombre correspond à « ${numberWords(n)} » ?`,n,[Math.max(100,n-10),Math.min(999,n+10),Math.max(100,n-1)],"Repère les centaines, les dizaines et les unités.",`${n} = ${Math.floor(n/100)} centaines, ${Math.floor((n%100)/10)} dizaines et ${n%10} unités.`)}
+ if(id==="n999b"){const n=rand(100,999),h=Math.floor(n/100),d=Math.floor((n%100)/10),u=n%10;return textq(`Écris le nombre composé de ${h} centaines, ${d} dizaines et ${u} unités.`,n,"Additionne les valeurs de chaque chiffre.",`${h} centaines = ${h*100}<br>${d} dizaines = ${d*10}<br>${u} unités = ${u}<br>Total : ${h*100}+${d*10}+${u} = ${n}`)}
+ if(id==="add"){const a=rand(120,599),b=rand(80,399),r=a+b;return textq(`${a} + ${b} = ?`,r,"Aligne bien les unités, dizaines et centaines.",additionSteps(a,b))}
+ if(id==="shapes"){const s=pick([["carré","<span class='shape square'></span>"],["rectangle","<span class='shape rectangle'></span>"],["triangle","<span class='shape triangle'></span>"]]);return mc("Quelle est cette figure ?",s[0],["carré","rectangle","triangle","cercle"].filter(x=>x!==s[0]),"Compte les côtés et observe les angles.","",s[1])}
+ if(id==="sub"){const a=rand(300,999),b=rand(50,a-50),r=a-b;return textq(`${a} − ${b} = ?`,r,"Tu peux vérifier avec l’addition inverse.",subtractionSteps(a,b))}
+ if(id==="prob1"){const a=rand(15,60),b=rand(5,14);return textq(`Lina a ${a} cartes. Elle en gagne ${b}. Combien en a-t-elle maintenant ?`,a+b,"Le mot « gagne » indique qu’on ajoute.",`1. Elle avait ${a} cartes.<br>2. Elle en gagne ${b}.<br>3. Calcul : ${a} + ${b} = ${a+b}.<br>Réponse : elle a ${a+b} cartes.`)}
+ if(id==="solid"){return mc(...pick([["Quel solide a 6 faces carrées ?","cube",["boule","cylindre","pyramide"],"Un cube possède 6 faces carrées."],["Quel objet peut rouler dans toutes les directions ?","boule",["cube","pavé droit","pyramide"],"Une boule n’a pas de face plate."],["Une figure symétrique peut être partagée en…","deux parties superposables",["trois nombres","quatre couleurs","une seule ligne"],"Les deux parties se correspondent comme dans un miroir."]]))}
+ if(id==="length"){const t=rand(0,2);if(t===0){const n=rand(2,9);return textq(`${n} m = combien de cm ?`,n*100,"1 m = 100 cm.",`${n} × 100 = ${n*100} cm.`)}if(t===1){const n=rand(2,9)*100;return textq(`${n} cm = combien de m ?`,n/100,"100 cm = 1 m.",`${n} ÷ 100 = ${n/100} m.`)}return mc("Quelle unité convient pour la longueur d’un crayon ?","cm",["m","km","kg"],"Un crayon mesure quelques centimètres.")}
+ if(id==="mult"){const a=rand(2,10),b=rand(2,10);return textq(`${a} × ${b} = ?`,a*b,"Tu peux utiliser des additions répétées.",`${a} groupes de ${b} : ${Array(a).fill(b).join(" + ")} = ${a*b}.`)}
+ if(id==="time"){const h=rand(1,11),m=pick([0,15,30,45]),ha=(h%12)*30+m*.5,ma=m*6,vis=`<div class="clock"><div class="hand hour" style="transform:rotate(${ha}deg)"></div><div class="hand minute" style="transform:rotate(${ma}deg)"></div></div>`,label=m===0?`${h} h`:m===15?`${h} h 15`:m===30?`${h} h 30`:`${h} h 45`;return mc("Quelle heure indique l’horloge ?",label,[`${h} h ${m===0?30:0}`,`${(h%12)+1} h ${m}`,`${h} h ${m===15?45:15}`],"La petite aiguille donne l’heure, la grande les minutes.","",vis)}
+ if(id==="prob2"){const p=pick([2,3,4,5]),q=rand(2,6);return textq(`Un carnet coûte ${p} €. Combien coûtent ${q} carnets ?`,p*q,"On multiplie le prix d’un carnet par le nombre de carnets.",`1 carnet coûte ${p} €.<br>${q} carnets coûtent ${q} × ${p} = ${p*q} €.`)}
+ if(id==="grid"){const L=["A","B","C","D","E"],c=rand(0,4),r=rand(1,5);let cells="";for(let y=1;y<=5;y++)for(let x=0;x<5;x++)cells+=`<div>${y===r&&x===c?"⭐":""}</div>`;return textq("Donne les coordonnées de l’étoile, lettre puis nombre.",L[c]+r,"Lis d’abord la colonne, puis la ligne.",`La colonne est ${L[c]}. La ligne est ${r}. Donc les coordonnées sont ${L[c]+r}.`,`<div style="text-align:center;font-weight:bold">A &nbsp; B &nbsp; C &nbsp; D &nbsp; E</div><div class="grid-demo">${cells}</div>`)}
+ return textq("2 + 2 = ?",4,"Deux plus deux font quatre.","2 + 2 = 4.")
+}
+function additionSteps(a,b){const r=a+b;return `On pose :<br><strong>${a}<br>+ ${b}<br>= ${r}</strong><br>On commence par les unités, puis les dizaines, puis les centaines. Une retenue est reportée dans la colonne suivante si nécessaire.`}
+function subtractionSteps(a,b){const r=a-b;return `On pose :<br><strong>${a}<br>− ${b}<br>= ${r}</strong><br>On commence par les unités. Si le chiffre du haut est trop petit, on échange une dizaine contre 10 unités.`}
+function numberWords(n){const u=["zéro","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize"],t=["","","vingt","trente","quarante","cinquante","soixante"];function u100(x){if(x<17)return u[x];if(x<20)return"dix-"+u[x-10];if(x<70){let d=Math.floor(x/10),r=x%10;return t[d]+(r===1?" et un":r?"-"+u[r]:"")}if(x<80){if(x===71)return"soixante et onze";return"soixante-"+u100(x-60)}if(x===80)return"quatre-vingts";return"quatre-vingt-"+u100(x-80)}if(n<100)return u100(n);let h=Math.floor(n/100),r=n%100,s=h===1?"cent":u[h]+" cent"+(r===0?"s":"");return r?s+" "+u100(r):s}
+function renderQuestion(){
+ answered=false;selected=null;const q=questions[index];$("qnum").textContent=index+1;$("score").textContent=score;$("progressBar").style.width=`${index/questions.length*100}%`;
+ $("question").textContent=q.question;$("visual").innerHTML=q.visual||"";$("feedback").className="feedback";$("feedback").innerHTML="";$("validateBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");
+ if(q.type==="mc")$("answerArea").innerHTML=`<div class="choices">${q.choices.map(c=>`<button class="choice" data-value="${String(c).replaceAll('"','&quot;')}" onclick="choose(this)">${c}</button>`).join("")}</div>`;
+ else $("answerArea").innerHTML=`<input id="textAnswer" type="text" autocomplete="off" placeholder="Ta réponse">`;
+}
+function choose(btn){if(answered)return;selected=btn.dataset.value;document.querySelectorAll(".choice").forEach(x=>x.classList.remove("selected"));btn.classList.add("selected")}
+function validateAnswer(){
+ if(answered)return;const q=questions[index],v=q.type==="mc"?selected:($("textAnswer")?.value||"");if(v===null||String(v).trim()===""){alert("Choisis ou écris une réponse.");return}
+ answered=true;const ok=norm(v)===norm(q.correct);if(ok)score++;$("score").textContent=score;
+ $("feedback").className="feedback "+(ok?"ok":"ko");
+ $("feedback").innerHTML=(ok?`✅ Bravo ! ${q.explain||""}`:`❌ La bonne réponse est <strong>${q.correct}</strong>. ${q.explain||""}`)+(q.steps?`<div class="correction-steps"><strong>Correction détaillée :</strong><br>${q.steps}</div>`:"");
+ $("validateBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("nextBtn").textContent=index===questions.length-1?"Voir le résultat":"Question suivante";
+}
+function nextQuestion(){if(index<questions.length-1){index++;renderQuestion()}else finishQuiz()}
+function finishQuiz(){
+ const s=getState(),total=questions.length,earned=score*10;s.xp+=earned;s.stars+=score;
+ if(mode==="practice"){s.completed[currentTopic.id]=true;s.best[currentTopic.id]=Math.max(score,s.best[currentTopic.id]||0)}
+ if(!s.badges.includes("first"))s.badges.push("first");if(score===total&&!s.badges.includes("perfect"))s.badges.push("perfect");
+ const frCount=topics.fr.filter(t=>s.completed[t[2]]).length,mathCount=topics.math.filter(t=>s.completed[t[2]]).length;
+ if(frCount>=3&&!s.badges.includes("fr3"))s.badges.push("fr3");if(mathCount>=3&&!s.badges.includes("math3"))s.badges.push("math3");
+ if(mode==="arena"&&score>=7){const b=subject==="fr"?"arenaFr":"arenaMath";if(!s.badges.includes(b))s.badges.push(b)}
+ if(s.xp>=100&&!s.badges.includes("xp100"))s.badges.push("xp100");saveState(s);
+ $("finalScore").textContent=score;$("finalTotal").textContent=total;
+ $("resultIcon").textContent=score===total?"🏆🌟":score>=Math.ceil(total*.7)?"🎉⚡":"💪🌿";
+ $("resultTitle").textContent=mode==="arena"?(score>=7?"Arène remportée !":"Arène à retenter"):"Session terminée !";
+ $("resultMessage").textContent=`Tu gagnes ${earned} XP et ${score} étoile${score>1?"s":""}. `+(score===total?"Aucune erreur, magnifique !":score>=Math.ceil(total*.7)?"Très bon travail !":"Relis les corrections et recommence tranquillement.");
+ showScreen("result")
+}
+function replayLast(){if(lastConfig.mode==="practice"){currentTopic={id:lastConfig.id,title:lastConfig.title};startPractice()}else startArena(lastConfig.sub)}
+function updateArenaButtons(){const s=getState();$("arenaFrBtn").disabled=topics.fr.filter(t=>s.completed[t[2]]).length<3;$("arenaMathBtn").disabled=topics.math.filter(t=>s.completed[t[2]]).length<3}
+function renderBadges(){const s=getState();$("badgeList").innerHTML=badgeDefs.map(b=>`<div class="badge ${s.badges.includes(b[0])?"unlocked":""}"><div style="font-size:2rem">${s.badges.includes(b[0])?b[3]:"🔒"}</div><strong>${b[1]}</strong><br><small>${b[2]}</small></div>`).join("")}
+function renderProgress(){const s=getState();$("progressReport").innerHTML=`<p><strong>XP :</strong> ${s.xp} • <strong>Étoiles :</strong> ${s.stars} • <strong>Badges :</strong> ${s.badges.length}</p>`+["fr","math"].map(sub=>`<h3>${sub==="fr"?"Français":"Maths"}</h3>`+topics[sub].map(t=>`<div class="report-row"><span>${t[1]} ${t[0]}</span><span>${s.completed[t[2]]?"✅ Terminé":"À faire"}</span><span>Meilleur : ${s.best[t[2]]||0}/5</span></div>`).join("")).join("")}
+function resetAll(){if(confirm("Effacer tous les progrès, l’XP et les badges ?")){localStorage.removeItem("pokeRevisionState");refreshStats();showScreen("welcome")}}
+refreshStats();showScreen("welcome");
+</script>
+</body>
+</html>
