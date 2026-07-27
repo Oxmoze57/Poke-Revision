@@ -1,31 +1,28 @@
-# PokéRévisions – version aventure
+# PokéClasse RPG
 
-Application web éducative CE2 avec :
+RPG éducatif CE2 utilisant PokéAPI pour charger les images et les informations des Pokémon.
 
-- choix d’un compagnon de départ ;
-- XP, niveaux et évolution à 100 XP ;
-- 12 chapitres de français ;
-- 12 chapitres de mathématiques ;
-- leçons avant chaque série ;
-- lecture vocale des leçons et consignes ;
-- corrections immédiates et détaillées ;
-- sauvegarde locale des progrès ;
-- badges à débloquer ;
-- combats d’arène de 10 questions ;
-- publication possible gratuitement avec GitHub Pages.
+## Fonctionnalités
+- choix d’un Pokémon de départ ;
+- carte interactive ;
+- zones de français et de mathématiques ;
+- combats avec points de vie ;
+- bonnes réponses transformées en attaques ;
+- arène finale ;
+- Pokédex des Pokémon rencontrés ;
+- XP, étoiles, badges et sauvegarde locale ;
+- lecture vocale des questions.
 
-## Lancer l’application
+## Lancement
+Une connexion Internet est nécessaire pour charger les données depuis PokéAPI.
 
-Ouvrez `index.html` dans Chrome, Edge, Firefox ou Safari.
+### En local
+Décompressez le projet puis ouvrez `index.html` dans un navigateur moderne.
 
-## Publier sur GitHub Pages
+### GitHub Pages
+1. Placez `index.html` à la racine du dépôt.
+2. Allez dans Settings > Pages.
+3. Sélectionnez Deploy from a branch, `main`, puis `/root`.
 
-1. Créez un dépôt GitHub.
-2. Déposez `index.html` à la racine.
-3. Ouvrez `Settings > Pages`.
-4. Choisissez `Deploy from a branch`.
-5. Sélectionnez `main` et `/root`.
-
-## Important
-
-Cette application est une création éducative non officielle et n’utilise aucun fichier, dessin ou son officiel Pokémon.
+## Attribution et statut
+PokéAPI est un service tiers open source. Pokémon et les noms associés appartiennent à leurs détenteurs respectifs. Ce projet est une création éducative non officielle et non commerciale.
