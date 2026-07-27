@@ -1,18 +1,28 @@
-# PokéClasse RPG – Kanto & Johto
+# PokéClasse RPG – Bêta Pokédex
 
-Nouvelle structure du RPG éducatif :
+Version prête pour GitHub Pages.
 
-- Kanto est dédié au français.
-- Johto est dédié aux mathématiques.
-- Chaque région possède 8 unités à l'École des Dresseurs.
-- Une unité doit être réussie avec au moins 4/5 pour débloquer son arène.
-- Chaque région possède 8 arènes.
-- La difficulté augmente progressivement.
-- Une Ligue finale de 16 questions se débloque après les 8 badges.
-- Les entraînements de l'école ne capturent et n'ajoutent aucun Pokémon.
-- Les images des Pokémon sont chargées depuis PokéAPI.
-- Les cartes sont originales et schématiques, sans réutiliser les cartes officielles des jeux.
+## Nouveautés
 
-## Publication GitHub Pages
+- Les 8 arènes de Kanto et les 8 arènes de Johto sont rejouables.
+- Les questions changent à chaque nouvelle partie.
+- Le Pokémon adverse est choisi aléatoirement selon l'arène.
+- Une victoire ajoute le Pokémon rencontré au Pokédex.
+- Une nouvelle rencontre avec la même espèce augmente son compteur.
+- L'École des Dresseurs ne permet jamais de capturer un Pokémon.
+- Les Ligues finales permettent également des captures.
+- La progression existante des versions précédentes reste compatible.
 
-Placez `index.html` à la racine du dépôt, puis activez GitHub Pages dans `Settings > Pages`.
+## Installation sur GitHub
+
+1. Créez un nouveau dépôt GitHub.
+2. Envoyez `index.html` et `README.md` à la racine du dépôt.
+3. Ouvrez `Settings`.
+4. Ouvrez `Pages`.
+5. Dans `Build and deployment`, choisissez `Deploy from a branch`.
+6. Choisissez la branche `main` et le dossier `/root`.
+7. Enregistrez et attendez la création du lien public.
+
+Une connexion Internet est nécessaire, car les images sont chargées depuis PokéAPI.
+
+Pokémon et les noms associés appartiennent à leurs détenteurs respectifs. Ce projet est une création éducative non officielle.
