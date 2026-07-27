@@ -1,28 +1,18 @@
-# PokéClasse RPG
+# PokéClasse RPG – Kanto & Johto
 
-RPG éducatif CE2 utilisant PokéAPI pour charger les images et les informations des Pokémon.
+Nouvelle structure du RPG éducatif :
 
-## Fonctionnalités
-- choix d’un Pokémon de départ ;
-- carte interactive ;
-- zones de français et de mathématiques ;
-- combats avec points de vie ;
-- bonnes réponses transformées en attaques ;
-- arène finale ;
-- Pokédex des Pokémon rencontrés ;
-- XP, étoiles, badges et sauvegarde locale ;
-- lecture vocale des questions.
+- Kanto est dédié au français.
+- Johto est dédié aux mathématiques.
+- Chaque région possède 8 unités à l'École des Dresseurs.
+- Une unité doit être réussie avec au moins 4/5 pour débloquer son arène.
+- Chaque région possède 8 arènes.
+- La difficulté augmente progressivement.
+- Une Ligue finale de 16 questions se débloque après les 8 badges.
+- Les entraînements de l'école ne capturent et n'ajoutent aucun Pokémon.
+- Les images des Pokémon sont chargées depuis PokéAPI.
+- Les cartes sont originales et schématiques, sans réutiliser les cartes officielles des jeux.
 
-## Lancement
-Une connexion Internet est nécessaire pour charger les données depuis PokéAPI.
+## Publication GitHub Pages
 
-### En local
-Décompressez le projet puis ouvrez `index.html` dans un navigateur moderne.
-
-### GitHub Pages
-1. Placez `index.html` à la racine du dépôt.
-2. Allez dans Settings > Pages.
-3. Sélectionnez Deploy from a branch, `main`, puis `/root`.
-
-## Attribution et statut
-PokéAPI est un service tiers open source. Pokémon et les noms associés appartiennent à leurs détenteurs respectifs. Ce projet est une création éducative non officielle et non commerciale.
+Placez `index.html` à la racine du dépôt, puis activez GitHub Pages dans `Settings > Pages`.

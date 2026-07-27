@@ -3,116 +3,190 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PokéClasse RPG</title>
+<title>PokéClasse RPG – Kanto & Johto</title>
 <style>
-:root{--ink:#183153;--blue:#3b82f6;--yellow:#facc15;--red:#ef4444;--green:#22c55e;--paper:#fffef7}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:#bde6ff}
+:root{
+  --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
+  --paper:#fffef7;--line:#d7e3eb;--fr:#ef4444;--math:#2563eb;
+}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:linear-gradient(135deg,#c7ecff,#fff7cf)}
 button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-header{background:linear-gradient(90deg,#ef4444,#f97316);color:#fff;padding:12px 16px;box-shadow:0 4px 14px #0003;position:sticky;top:0;z-index:20}
-.bar{max-width:1100px;margin:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.title{font-weight:950;font-size:1.35rem}.stats{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-.pill{background:#ffffffdf;color:#183153;padding:7px 11px;border-radius:999px;font-weight:900}
-main{max-width:1100px;margin:18px auto;padding:0 14px 40px}.card{background:var(--paper);border:3px solid #fff;border-radius:22px;padding:18px;box-shadow:0 12px 26px #17415a33;margin-bottom:18px}
-.btn{border:0;border-radius:14px;padding:11px 15px;background:var(--blue);color:#fff;font-weight:900;box-shadow:0 4px 0 #1e5fae}.btn.green{background:var(--green);box-shadow:0 4px 0 #16823c}.btn.yellow{background:var(--yellow);color:#4b3c00;box-shadow:0 4px 0 #b59100}.btn.red{background:var(--red);box-shadow:0 4px 0 #a51f1f}.btn.ghost{background:#fff;color:var(--ink);border:2px solid #d6e1e8;box-shadow:none}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-.starter{background:#fff;border:3px solid #dce8ef;border-radius:18px;padding:12px;text-align:center}.starter img{width:150px;height:150px;object-fit:contain}.starter:hover{border-color:var(--blue)}
-.world{position:relative;min-height:520px;overflow:hidden;background:linear-gradient(#96dbff 0 34%,#9dde7b 34% 100%);border-radius:20px;border:5px solid #fff}
-.world:before{content:"";position:absolute;inset:0;background:radial-gradient(circle,#65b84b 0 8px,transparent 9px) 0 0/54px 54px;opacity:.35}
-.path{position:absolute;background:#efd28e;border:5px solid #ddb96a;border-radius:30px}.p1{left:7%;right:7%;height:82px;top:220px}.p2{width:86px;top:60px;bottom:40px;left:46%}
-.place{position:absolute;width:150px;min-height:100px;border:0;border-radius:18px;padding:10px;background:#fffef0;color:var(--ink);font-weight:950;box-shadow:0 8px 0 #0002}.place span{display:block;font-size:2rem}.place.locked{filter:grayscale(1);opacity:.55}.village{left:5%;bottom:35px}.forest{left:30%;top:55px}.lake{right:28%;bottom:35px}.arena{right:5%;top:55px}.school{left:42%;top:190px}
-.player{position:absolute;left:45%;bottom:35px;width:88px;height:88px;border-radius:50%;background:#fff;border:5px solid #ef4444;display:grid;place-items:center;font-size:2.6rem;box-shadow:0 7px 12px #0003;transition:.45s;z-index:5}
-.dialogue{font-size:1.15rem;line-height:1.55;background:#eef8ff;border-left:6px solid var(--blue);padding:14px;border-radius:14px}
-.battlefield{background:linear-gradient(#c8edff 0 58%,#81c784 58%);border-radius:20px;padding:18px;min-height:430px;position:relative;overflow:hidden}
-.fighter{position:absolute;text-align:center}.fighter img{width:min(35vw,230px);height:min(35vw,230px);object-fit:contain;filter:drop-shadow(0 14px 8px #0003)}.enemy{right:6%;top:25px}.hero{left:5%;bottom:10px}.hpbox{background:#fff;border:4px solid #29465b;border-radius:14px;padding:8px;min-width:210px;font-weight:900}.hp{height:13px;background:#d7e1e6;border-radius:99px;overflow:hidden}.hp>div{height:100%;background:#22c55e;transition:.4s}
-.attack{animation:attack .45s}@keyframes attack{50%{transform:translateX(45px) scale(1.07)}}.hit{animation:hit .4s}@keyframes hit{25%,75%{transform:translateX(10px);filter:brightness(1.8)}50%{transform:translateX(-10px)}}
-.quizpanel{margin-top:14px;background:#fff;border-radius:18px;padding:16px}.question{font-size:1.25rem;font-weight:950;margin:12px 0}.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}.choice{border:2px solid #cbdce7;background:#fff;border-radius:13px;padding:10px;font-weight:800}.choice.sel{border-color:var(--blue);background:#eaf5ff}.feedback{margin-top:10px;padding:11px;border-radius:12px;font-weight:800}.ok{background:#dcfce7}.ko{background:#fee2e2}
-.lesson{background:#fff8dd;border-left:6px solid var(--yellow);padding:14px;border-radius:14px;line-height:1.55}
-.dex{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.dexcard{background:#fff;border:2px solid #d9e4ea;border-radius:16px;padding:10px;text-align:center}.dexcard img{width:110px;height:110px;object-fit:contain}
-.small{font-size:.84rem;color:#5f7182}.notice{font-size:.8rem;color:#607080}@media(max-width:680px){.world{min-height:680px}.place{width:125px}.village{left:3%;bottom:25px}.lake{right:3%;bottom:25px}.forest{left:3%;top:55px}.arena{right:3%;top:55px}.school{left:31%;top:290px}.p1{top:330px}.p2{left:43%}.player{left:39%;bottom:150px}.battlefield{min-height:520px}.fighter img{width:150px;height:150px}.enemy{right:2%}.hero{left:2%}}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,#ef4444,#f97316);color:#fff;box-shadow:0 4px 14px #0003}
+.top{max-width:1180px;margin:auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-weight:950;font-size:1.35rem}.stats{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;gap:5px;align-items:center;background:#ffffffdf;color:var(--ink);padding:7px 11px;border-radius:999px;font-weight:900}
+main{max-width:1180px;margin:18px auto;padding:0 14px 42px}.card{background:var(--paper);border:3px solid #fff;border-radius:22px;padding:18px;box-shadow:0 12px 28px #163f5b33;margin-bottom:18px}
+.btn{border:0;border-radius:14px;padding:11px 15px;background:var(--blue);color:#fff;font-weight:900;box-shadow:0 4px 0 #1f5fa7}.btn.green{background:var(--green);box-shadow:0 4px 0 #16823c}.btn.red{background:var(--red);box-shadow:0 4px 0 #a51f1f}.btn.yellow{background:var(--yellow);color:#4c3c00;box-shadow:0 4px 0 #b18e00}.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:none}.btn:disabled{opacity:.45;filter:grayscale(1);cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:center}.heroArt{text-align:center;font-size:5rem}
+.choiceWorld{min-height:220px;border-radius:20px;padding:18px;color:#fff;position:relative;overflow:hidden}.choiceWorld h2{font-size:2rem;margin-bottom:6px}.frWorld{background:linear-gradient(135deg,#ef4444,#f59e0b)}.mathWorld{background:linear-gradient(135deg,#2563eb,#0ea5e9)}
+.mapWrap{position:relative;min-height:610px;border-radius:22px;overflow:hidden;border:5px solid #fff;box-shadow:0 12px 30px #0002}.mapFr{background:linear-gradient(#9edfff 0 28%,#98d977 28% 100%)}.mapMath{background:linear-gradient(#b5e7ff 0 30%,#8fd086 30% 100%)}
+.mapWrap:before{content:"";position:absolute;inset:0;background:radial-gradient(circle,#5bae49 0 8px,transparent 9px) 0 0/58px 58px;opacity:.28}
+.route{position:absolute;background:#eed08b;border:5px solid #d8b666;border-radius:30px;z-index:1}.route.h{height:75px;left:7%;right:7%;top:46%}.route.v{width:80px;top:8%;bottom:8%;left:47%}
+.node{position:absolute;width:145px;min-height:100px;border:0;border-radius:18px;padding:9px;background:#fffef3;color:var(--ink);font-weight:950;box-shadow:0 8px 0 #0002;z-index:3}.node span{display:block;font-size:2rem}.node small{display:block;color:#5e7081}.node.locked{filter:grayscale(1);opacity:.48}
+.school{left:42%;top:42%}.n1{left:3%;top:10%}.n2{left:24%;top:8%}.n3{right:25%;top:8%}.n4{right:3%;top:12%}.n5{left:4%;bottom:10%}.n6{left:25%;bottom:7%}.n7{right:25%;bottom:7%}.n8{right:3%;bottom:10%}.league{left:41%;top:4%;background:#fff0f0;border:3px solid #ef4444}
+.regionTabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.regionTabs button.active{outline:5px solid #ffffffaa}
+.lessonBox{background:#eff8ff;border-left:6px solid var(--blue);padding:16px;border-radius:16px;line-height:1.6}.example{background:#fff8dd;border-left:6px solid var(--yellow);padding:14px;border-radius:14px;margin-top:10px}
+.unitGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.unit{background:#fff;border:2px solid var(--line);border-radius:17px;padding:14px}.unit.done{border-color:#55bd67;background:#f2fff3}.unit h3{margin:0 0 6px}
+.progress{height:13px;background:#dce6eb;border-radius:999px;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,#22c55e,#84cc16);transition:.3s}
+.question{font-size:1.3rem;font-weight:950;margin:15px 0}.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:9px}.choice{border:2px solid #cbdce7;background:#fff;border-radius:13px;padding:10px;font-weight:850}.choice.sel{border-color:var(--blue);background:#eaf5ff}
+.feedback{margin-top:12px;padding:13px;border-radius:13px;font-weight:800}.ok{background:#dcfce7}.ko{background:#fee2e2}.correction{margin-top:9px;background:#fff;padding:11px;border-radius:10px;font-weight:600}
+.battlefield{min-height:440px;border-radius:20px;background:linear-gradient(#bce9ff 0 58%,#83c978 58%);position:relative;overflow:hidden}.fighter{position:absolute;text-align:center}.fighter img{width:min(34vw,220px);height:min(34vw,220px);object-fit:contain;filter:drop-shadow(0 12px 7px #0003)}.enemy{right:6%;top:25px}.heroF{left:5%;bottom:10px}.hpbox{background:#fff;border:4px solid #2b4659;border-radius:14px;padding:8px;min-width:210px;font-weight:900}.hp{height:13px;background:#dce5ea;border-radius:99px;overflow:hidden}.hp div{height:100%;background:#22c55e;transition:.4s}.attack{animation:attack .45s}@keyframes attack{50%{transform:translateX(45px) scale(1.08)}}.hit{animation:hit .4s}@keyframes hit{25%,75%{transform:translateX(10px);filter:brightness(1.8)}50%{transform:translateX(-10px)}}
+.quizPanel{background:#fff;border-radius:18px;padding:15px;margin-top:13px}.badgeGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.badge{background:#fff;border:2px dashed #c8d5dd;border-radius:16px;padding:13px;text-align:center}.badge.on{border-style:solid;border-color:#eab308;background:#fff9db}
+.notice{font-size:.82rem;color:#607181}.small{font-size:.85rem;color:#607181}@media(max-width:780px){.hero{grid-template-columns:1fr}.mapWrap{min-height:900px}.school{left:31%;top:43%}.league{left:31%;top:2%}.n1{left:2%;top:12%}.n2{right:2%;left:auto;top:12%}.n3{left:2%;top:29%}.n4{right:2%;top:29%}.n5{left:2%;bottom:28%}.n6{right:2%;left:auto;bottom:28%}.n7{left:2%;bottom:8%}.n8{right:2%;bottom:8%}.route.h{top:48%}.route.v{left:46%}.battlefield{min-height:530px}.fighter img{width:155px;height:155px}}
 </style>
 </head>
 <body>
-<header><div class="bar"><div class="title">⚡ PokéClasse RPG</div><div class="stats"><span class="pill">⭐ <b id="stars">0</b></span><span class="pill">XP <b id="xp">0</b></span><span class="pill">🏅 <b id="badges">0</b></span></div></div></header>
+<header><div class="top"><div class="logo">⚡ PokéClasse RPG</div><div class="stats"><span class="pill">⭐ <b id="stars">0</b></span><span class="pill">XP <b id="xp">0</b></span><span class="pill">🏅 <b id="badges">0</b></span></div></div></header>
 <main>
-<section id="loading" class="card"><h2>Connexion au monde Pokémon…</h2><p>Chargement des Pokémon depuis PokéAPI.</p></section>
+<section id="loading" class="card"><h2>Chargement de PokéAPI…</h2></section>
 
 <section id="intro" class="card hidden">
-<h2>Bienvenue à Bourg-Savoir !</h2>
-<div class="dialogue">Professeur Savo : « Pour devenir Maître des Connaissances, tu devras explorer le monde, réviser le français et les mathématiques, puis gagner les badges des arènes ! »</div>
-<h3 style="margin-top:18px">Choisis ton premier Pokémon</h3><div id="starters" class="grid"></div>
-<p class="notice">Les images et informations sont chargées en ligne grâce à PokéAPI. Une connexion Internet est nécessaire.</p>
+<div class="hero"><div><h1>Deux régions, deux grandes aventures</h1><p>Pars à Kanto pour maîtriser le français et à Johto pour maîtriser les mathématiques. Chaque arène exige d’abord de suivre l’unité correspondante à l’École des Dresseurs.</p><div class="row"><button class="btn red" onclick="chooseRegion('fr')">Explorer Kanto – Français</button><button class="btn" onclick="chooseRegion('math')">Explorer Johto – Mathématiques</button></div><p class="notice">Les cartes sont des cartes originales et schématiques inspirées d’une progression par régions, sans reprendre les cartes officielles des jeux.</p></div><div class="heroArt">🗺️⚡🏫🏟️</div></div>
+</section>
+
+<section id="regionSelect" class="card hidden">
+<div class="row"><button class="btn ghost" onclick="openScreen('intro')">← Accueil</button></div>
+<div class="grid">
+<div class="choiceWorld frWorld"><h2>Kanto</h2><p>Parcours de français : vocabulaire, conjugaison, accords, orthographe et lecture.</p><button class="btn yellow" onclick="chooseRegion('fr')">Entrer à Kanto</button></div>
+<div class="choiceWorld mathWorld"><h2>Johto</h2><p>Parcours de mathématiques : nombres, calcul, géométrie, mesures, problèmes et repérage.</p><button class="btn yellow" onclick="chooseRegion('math')">Entrer à Johto</button></div>
+</div>
 </section>
 
 <section id="map" class="hidden">
-<div class="card row"><button class="btn ghost" onclick="openScreen('dex')">📕 Pokédex</button><button class="btn ghost" onclick="openScreen('report')">📊 Progrès</button><span class="pill">Partenaire : <b id="partnerLabel"></b></span></div>
-<div class="world card">
-<div id="player" class="player">🧢</div>
-<button class="place village" onclick="visit('village')"><span>🏘️</span>Bourg-Savoir<small>Leçons</small></button>
-<button class="place forest" onclick="visit('forest')"><span>🌳</span>Bois des Mots<small>Français</small></button>
-<button class="place lake" onclick="visit('lake')"><span>🌊</span>Lac des Nombres<small>Maths</small></button>
-<button id="arenaPlace" class="place arena locked" onclick="visit('arena')"><span>🏟️</span>Arène Savoir<small>Boss final</small></button>
-<button class="place school" onclick="visit('school')"><span>🏫</span>École des Dresseurs<small>Entraînement</small></button>
+<div class="card row"><button class="btn ghost" onclick="openScreen('regionSelect')">Changer de région</button><button class="btn ghost" onclick="openScreen('badgesScreen')">🏅 Badges</button><button class="btn ghost" onclick="openScreen('report')">📊 Progrès</button><span class="pill">Région : <b id="regionName"></b></span></div>
+<div id="mapCanvas" class="mapWrap">
+<div class="route h"></div><div class="route v"></div>
+<button class="node school" onclick="openSchool()"><span>🏫</span>École des Dresseurs<small>Leçons et entraînements</small></button>
+<button id="leagueNode" class="node league locked" onclick="openLeague()"><span>🏆</span>Ligue finale<small id="leagueStatus">Verrouillée</small></button>
+<div id="arenaNodes"></div>
 </div>
 </section>
 
-<section id="zone" class="card hidden"><div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2 id="zoneTitle"></h2></div><div id="zoneStory" class="dialogue"></div><div id="zoneContent" style="margin-top:14px"></div></section>
+<section id="school" class="card hidden">
+<div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2 id="schoolTitle"></h2></div>
+<p>À l’école, tu apprends la leçon puis tu réussis un entraînement de 5 questions. Aucun Pokémon n’est ajouté au Pokédex ici.</p>
+<div id="schoolUnits" class="unitGrid"></div>
+</section>
+
+<section id="lesson" class="card hidden">
+<div class="row"><button class="btn ghost" onclick="openSchool()">← École</button><span class="pill" id="lessonUnit"></span></div>
+<div id="lessonContent" class="lessonBox"></div>
+<div class="row" style="margin-top:14px"><button class="btn yellow" onclick="startTraining()">Commencer l’entraînement</button><button class="btn ghost" onclick="speakLesson()">🔊 Lire la leçon</button></div>
+</section>
+
+<section id="training" class="card hidden">
+<div class="row"><button class="btn ghost" onclick="openSchool()">← Quitter</button><span class="pill" id="trainingTitle"></span><span class="pill">Question <b id="trainNum">1</b>/5</span><span class="pill">Score <b id="trainScore">0</b></span></div>
+<div class="progress" style="margin-top:12px"><div id="trainProgress"></div></div><div id="trainQuestion" class="question"></div><div id="trainChoices" class="choices"></div><div id="trainFeedback"></div><div class="row" style="margin-top:12px"><button id="trainValidate" class="btn yellow" onclick="validateTraining()">Valider</button><button id="trainNext" class="btn green hidden" onclick="nextTraining()">Suivant</button></div>
+</section>
+
+<section id="arenaScreen" class="card hidden">
+<div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><span class="pill" id="arenaTitle"></span></div>
+<div id="arenaIntro" class="lessonBox"></div><div class="row" style="margin-top:14px"><button class="btn red" onclick="startArenaBattle()">Commencer le combat</button></div>
+</section>
 
 <section id="battle" class="card hidden">
-<div class="row"><button class="btn ghost" onclick="abandon()">← Fuir</button><span class="pill" id="battleLabel"></span></div>
+<div class="row"><button class="btn ghost" onclick="openScreen('map')">← Abandonner</button><span class="pill" id="battleTitle"></span><span class="pill">Question <b id="battleNum"></b>/<b id="battleTotal"></b></span></div>
 <div class="battlefield">
-<div id="enemyFighter" class="fighter enemy"><div class="hpbox"><span id="enemyName"></span><div class="hp"><div id="enemyHp"></div></div></div><img id="enemyImg" alt=""></div>
-<div id="heroFighter" class="fighter hero"><img id="heroImg" alt=""><div class="hpbox"><span id="heroName"></span><div class="hp"><div id="heroHp"></div></div></div></div>
+<div id="enemyF" class="fighter enemy"><div class="hpbox"><span id="enemyName"></span><div class="hp"><div id="enemyHp"></div></div></div><img id="enemyImg" alt=""></div>
+<div id="heroF" class="fighter heroF"><img id="heroImg" alt=""><div class="hpbox"><span id="heroName"></span><div class="hp"><div id="heroHp"></div></div></div></div>
 </div>
-<div class="quizpanel"><div id="battleQuestion" class="question"></div><div id="battleChoices" class="choices"></div><div id="battleFeedback"></div><div class="row" style="margin-top:10px"><button id="attackBtn" class="btn yellow" onclick="checkBattle()">Lancer l’attaque</button><button id="nextBattleBtn" class="btn green hidden" onclick="nextBattle()">Continuer</button><button class="btn ghost" onclick="speakQuestion()">🔊 Lire</button></div></div>
+<div class="quizPanel"><div id="battleQuestion" class="question"></div><div id="battleChoices" class="choices"></div><div id="battleFeedback"></div><div class="row" style="margin-top:10px"><button id="battleValidate" class="btn yellow" onclick="validateBattle()">Attaquer</button><button id="battleNext" class="btn green hidden" onclick="nextBattle()">Continuer</button><button class="btn ghost" onclick="speakBattle()">🔊 Lire</button></div></div>
 </section>
 
-<section id="dex" class="card hidden"><div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2>Pokédex rencontré</h2></div><div id="dexGrid" class="dex"></div></section>
-<section id="report" class="card hidden"><div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2>Progrès</h2></div><div id="reportContent"></div></section>
-<section id="ending" class="card hidden"><h2>🏆 Victoire !</h2><div class="dialogue">Tu as vaincu le Champion Savo et obtenu le Badge Maître des Connaissances. Ton aventure peut continuer : rejoue les zones pour gagner de l’XP et rencontrer d’autres Pokémon.</div><div class="row" style="margin-top:15px"><button class="btn green" onclick="openScreen('map')">Retourner sur la carte</button></div></section>
+<section id="badgesScreen" class="card hidden"><div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2>Badges</h2></div><div id="badgeGrid" class="badgeGrid"></div></section>
+<section id="report" class="card hidden"><div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2>Progrès</h2></div><div id="reportBody"></div></section>
+<section id="ending" class="card hidden"><h2>🏆 Ligue remportée !</h2><p id="endingText" class="lessonBox"></p><button class="btn green" onclick="openScreen('map')">Retour à la carte</button></section>
 </main>
 <script>
 const API="https://pokeapi.co/api/v2/pokemon/";
-const ids={bulbasaur:1,charmander:4,squirtle:7,pikachu:25,rattata:19,pidgey:16,caterpie:10,oddish:43,psyduck:54,magikarp:129,meowth:52,machop:66,abra:63,gastly:92,eevee:133};
-const frNames={bulbasaur:"Bulbizarre",charmander:"Salamèche",squirtle:"Carapuce",pikachu:"Pikachu",rattata:"Rattata",pidgey:"Roucool",caterpie:"Chenipan",oddish:"Mystherbe",psyduck:"Psykokwak",magikarp:"Magicarpe",meowth:"Miaouss",machop:"Machoc",abra:"Abra",gastly:"Fantominus",eevee:"Évoli"};
-const cache={};let state=JSON.parse(localStorage.getItem("pokerpg")||'{"xp":0,"stars":0,"badges":[],"wins":{"fr":0,"math":0},"seen":[],"partner":null}');
-let battle={subject:"fr",enemy:null,q:0,heroHp:100,enemyHp:100,selected:null,answered:false,total:5,boss:false};
-const $=x=>document.getElementById(x),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>[...a].sort(()=>Math.random()-.5);
-function save(){localStorage.setItem("pokerpg",JSON.stringify(state));stats()}
+const pokemonPool=["pikachu","bulbasaur","charmander","squirtle","pidgey","rattata","meowth","psyduck","machop","abra","gastly","eevee","onix","geodude","magnemite","haunter","kadabra","arcanine","lapras","dragonite"];
+const frNames={pikachu:"Pikachu",bulbasaur:"Bulbizarre",charmander:"Salamèche",squirtle:"Carapuce",pidgey:"Roucool",rattata:"Rattata",meowth:"Miaouss",psyduck:"Psykokwak",machop:"Machoc",abra:"Abra",gastly:"Fantominus",eevee:"Évoli",onix:"Onix",geodude:"Racaillou",magnemite:"Magnéti",haunter:"Spectrum",kadabra:"Kadabra",arcanine:"Arcanin",lapras:"Lokhlass",dragonite:"Dracolosse"};
+const units={
+fr:[
+["Vocabulaire","Synonymes, antonymes et familles de mots","syn"],["Sons et alphabet","Sons [s]/[g] et ordre alphabétique","sounds"],["Verbes","Infinitif et présent","verbs"],["Accord sujet-verbe","Reconnaître le sujet et accorder le verbe","sv"],["Temps du passé","L’imparfait","imperfect"],["Groupe nominal","Accords dans le groupe nominal","gn"],["Orthographe","Lettres finales muettes et écriture","silent"],["Temps du futur","Le futur simple","future"]],
+math:[
+["Nombres I","Lire, écrire et décomposer jusqu’à 999","n999a"],["Nombres II","Comparer et ranger les nombres","n999b"],["Addition","Addition posée avec retenue","add"],["Soustraction","Soustraction posée","sub"],["Géométrie","Figures, solides et symétrie","shapes"],["Mesures","Longueurs et lecture de l’heure","measure"],["Multiplication","Tables et groupes égaux","mult"],["Problèmes et repérage","Problèmes à étapes et quadrillage","problem"]]
+};
+const lessons={
+syn:["Un synonyme a un sens proche. Un antonyme a un sens contraire. Des mots de la même famille ont une partie commune et un sens lié.","heureux/content ; grand/petit ; fleur/fleuriste."],
+sounds:["La lettre c fait souvent [s] devant e, i ou y. La lettre g fait souvent [j] devant e, i ou y. Pour l’ordre alphabétique, compare les lettres de gauche à droite.","cerise, girafe ; chat, cheval, chien."],
+verbs:["L’infinitif est le nom du verbe. Au présent, la terminaison change selon la personne.","nous chantons → chanter ; nous jouons."],
+sv:["Le verbe s’accorde avec son sujet. Un sujet pluriel demande un verbe au pluriel.","Le chien court. Les chiens courent."],
+imperfect:["L’imparfait sert souvent à raconter une habitude ou une description passée. Terminaisons : -ais, -ais, -ait, -ions, -iez, -aient.","Quand j’étais petit, je jouais."],
+gn:["Dans le groupe nominal, déterminant, nom et adjectif s’accordent en genre et en nombre.","une petite maison ; des petites maisons."],
+silent:["Certaines lettres finales ne s’entendent pas. On cherche un mot de la même famille pour les retrouver.","grand → grande ; petit → petite."],
+future:["Le futur parle de ce qui arrivera plus tard. Terminaisons fréquentes : -ai, -as, -a, -ons, -ez, -ont.","demain, nous irons."],
+n999a:["Un nombre jusqu’à 999 contient centaines, dizaines et unités.","347 = 3 centaines, 4 dizaines, 7 unités."],
+n999b:["Pour comparer deux nombres, compare d’abord les centaines, puis les dizaines, puis les unités.","582 > 529 car 8 dizaines > 2 dizaines."],
+add:["Aligne unités, dizaines et centaines. Commence par les unités et reporte une retenue si la somme dépasse 9.","278 + 156 = 434."],
+sub:["Aligne les chiffres. Si le chiffre du haut est trop petit, échange une dizaine contre 10 unités.","402 − 178 = 224."],
+shapes:["Carré : 4 côtés égaux. Rectangle : 4 angles droits. Triangle : 3 côtés. Un cube a 6 faces carrées.","Observe côtés, angles et faces."],
+measure:["1 m = 100 cm. La petite aiguille indique les heures, la grande les minutes.","3 m = 300 cm ; grande aiguille sur 6 = 30 minutes."],
+mult:["Multiplier, c’est additionner plusieurs fois le même nombre.","4 × 3 = 3 + 3 + 3 + 3 = 12."],
+problem:["Dans un problème, repère la question, les nombres utiles et l’opération. Dans un quadrillage, lis colonne puis ligne.","C4 = colonne C, ligne 4."]
+};
+let state=JSON.parse(localStorage.getItem("pokeClassV2")||'{"xp":0,"stars":0,"badges":[],"school":{},"arenas":{},"leagues":{},"partner":"pikachu"}');
+let region="fr",currentUnit=null,train={q:0,score:0,current:null,selected:null},battle={arena:0,q:0,total:0,score:0,heroHp:100,enemyHp:100,current:null,selected:null,enemy:null,league:false};
+const cache={},$=x=>document.getElementById(x),pick=a=>a[Math.floor(Math.random()*a.length)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>[...a].sort(()=>Math.random()-.5);
+async function poke(name){if(cache[name])return cache[name];let r=await fetch(API+name);let d=await r.json();return cache[name]={name,fr:frNames[name]||name,img:d.sprites.other["official-artwork"].front_default||d.sprites.front_default}}
+function save(){localStorage.setItem("pokeClassV2",JSON.stringify(state));stats()}
 function stats(){$("stars").textContent=state.stars;$("xp").textContent=state.xp;$("badges").textContent=state.badges.length}
-async function pokemon(name){if(cache[name])return cache[name];let r=await fetch(API+name);if(!r.ok)throw Error("PokéAPI indisponible");let d=await r.json();let p={name,fr:frNames[name]||name,img:d.sprites.other["official-artwork"].front_default||d.sprites.front_default,sprite:d.sprites.front_default,types:d.types.map(x=>x.type.name)};cache[name]=p;return p}
-function openScreen(id){["loading","intro","map","zone","battle","dex","report","ending"].forEach(x=>$(x).classList.toggle("hidden",x!==id));if(id==="map")renderMap();if(id==="dex")renderDex();if(id==="report")renderReport()}
-async function init(){try{await Promise.all(["bulbasaur","charmander","squirtle","pikachu"].map(pokemon));renderStarters();openScreen(state.partner?"map":"intro")}catch(e){$("loading").innerHTML="<h2>Connexion impossible</h2><p>Vérifie la connexion Internet puis recharge la page. PokéAPI doit être accessible.</p>"}stats()}
-function renderStarters(){$("starters").innerHTML=["bulbasaur","charmander","squirtle","pikachu"].map(n=>{let p=cache[n];return `<button class="starter" onclick="chooseStarter('${n}')"><img src="${p.img}" alt="${p.fr}"><h3>${p.fr}</h3><span class="small">${p.types.join(" / ")}</span></button>`}).join("")}
-function chooseStarter(n){state.partner=n;if(!state.seen.includes(n))state.seen.push(n);save();openScreen("map")}
-async function renderMap(){let p=await pokemon(state.partner);$("partnerLabel").textContent=p.fr;$("arenaPlace").classList.toggle("locked",state.wins.fr<2||state.wins.math<2)}
-function moveTo(zone){let pos={village:["12%","70%"],forest:["31%","18%"],lake:["68%","70%"],arena:["82%","18%"],school:["47%","43%"]}[zone];$("player").style.left=pos[0];$("player").style.top=pos[1];$("player").style.bottom="auto"}
-function visit(z){if(z==="arena"&&(state.wins.fr<2||state.wins.math<2)){alert("Gagne au moins 2 combats de français et 2 de maths pour débloquer l’arène.");return}moveTo(z);setTimeout(()=>openZone(z),450)}
-function openZone(z){let data={village:["Bourg-Savoir","Le Professeur Savo te propose de relire une leçon avant de repartir."],forest:["Bois des Mots","Les Pokémon sauvages protègent les mots. Réponds juste pour lancer une attaque de français !"],lake:["Lac des Nombres","Les Pokémon aquatiques te défient avec des calculs et des problèmes."],school:["École des Dresseurs","Choisis librement ta matière pour t’entraîner."],arena:["Arène Savoir","Le Champion Savo t’attend pour un combat de 10 questions mélangées."]}[z];$("zoneTitle").textContent=data[0];$("zoneStory").textContent=data[1];
-if(z==="village")$("zoneContent").innerHTML=`<div class="lesson"><b>Astuce de français :</b> le verbe s’accorde avec le sujet.<br><b>Astuce de maths :</b> dans un problème, cherche d’abord ce qu’on te demande.</div>`;
-else if(z==="forest")$("zoneContent").innerHTML=`<button class="btn green" onclick="startBattle('fr')">Affronter un Pokémon sauvage</button>`;
-else if(z==="lake")$("zoneContent").innerHTML=`<button class="btn green" onclick="startBattle('math')">Affronter un Pokémon sauvage</button>`;
-else if(z==="school")$("zoneContent").innerHTML=`<div class="row"><button class="btn" onclick="startBattle('fr')">Français</button><button class="btn green" onclick="startBattle('math')">Maths</button></div>`;
-else $("zoneContent").innerHTML=`<button class="btn red" onclick="startBattle('mix',true)">Défier le Champion</button>`;openScreen("zone")}
-async function startBattle(subject,boss=false){let pool=boss?["eevee","abra","gastly"]:subject==="fr"?["rattata","pidgey","caterpie","meowth"]:["psyduck","magikarp","oddish","machop"];let enemyName=pick(pool),enemy=await pokemon(enemyName),hero=await pokemon(state.partner);if(!state.seen.includes(enemyName))state.seen.push(enemyName);battle={subject,enemy:enemyName,q:0,heroHp:100,enemyHp:100,selected:null,answered:false,total:boss?10:5,boss};$("enemyImg").src=enemy.img;$("heroImg").src=hero.img;$("enemyName").textContent=enemy.fr;$("heroName").textContent=hero.fr;$("battleLabel").textContent=boss?"Combat d’arène":"Combat sauvage";openScreen("battle");renderBattleQ();save()}
-function makeQ(sub){if(sub==="mix")sub=Math.random()<.5?"fr":"math";if(sub==="math"){let kind=rand(0,3);if(kind===0){let a=rand(20,400),b=rand(10,300);return{q:`${a} + ${b} = ?`,a:String(a+b),choices:shuffle([a+b,a+b+10,a+b-10,a+b+1].map(String)),ex:`On additionne ${a} et ${b}.`}}if(kind===1){let a=rand(100,600),b=rand(10,a-5);return{q:`${a} − ${b} = ?`,a:String(a-b),choices:shuffle([a-b,a-b+10,a-b-10,a-b+1].map(String)),ex:`On soustrait ${b} à ${a}.`}}if(kind===2){let a=rand(2,10),b=rand(2,10);return{q:`${a} × ${b} = ?`,a:String(a*b),choices:shuffle([a*b,a*b+a,a*b-b,a+b].map(String)),ex:`${a} groupes de ${b} donnent ${a*b}.`}}let n=rand(2,8);return{q:`${n} m correspondent à combien de centimètres ?`,a:String(n*100),choices:shuffle([n*100,n*10,n+100,n*1000].map(String)),ex:"1 m = 100 cm."}}
-let qs=[
-{q:"Quel est l’antonyme de « rapide » ?",a:"lent",choices:["lent","heureux","grand","fort"],ex:"Un antonyme est un mot de sens contraire."},
-{q:"Quel est l’infinitif de « nous jouons » ?",a:"jouer",choices:["jouer","jouons","joué","jouera"],ex:"L’infinitif est la forme non conjuguée."},
-{q:"Complète : Les enfants ___ dans la cour.",a:"jouent",choices:["jouent","joue","jouons","jouez"],ex:"Le sujet est pluriel."},
-{q:"Quel mot est de la même famille que « fleur » ?",a:"fleuriste",choices:["fleuriste","fleuve","flèche","flocon"],ex:"Fleur et fleuriste ont une partie et un sens communs."},
-{q:"Demain, nous ___ au parc.",a:"irons",choices:["irons","allons","allions","aller"],ex:"« Demain » indique le futur."},
-{q:"Quel mot est correctement accordé ?",a:"des chats noirs",choices:["des chats noirs","des chat noir","des chats noir","des chat noirs"],ex:"Le nom et l’adjectif sont au pluriel."}
-];return pick(qs)}
-function renderBattleQ(){battle.current=makeQ(battle.subject);battle.selected=null;battle.answered=false;$("battleQuestion").textContent=`Question ${battle.q+1}/${battle.total} — ${battle.current.q}`;$("battleChoices").innerHTML=battle.current.choices.map(c=>`<button class="choice" onclick="selectChoice(this,'${c.replaceAll("'","\\'")}')">${c}</button>`).join("");$("battleFeedback").innerHTML="";$("attackBtn").classList.remove("hidden");$("nextBattleBtn").classList.add("hidden");updateHp()}
-function selectChoice(el,v){if(battle.answered)return;battle.selected=v;document.querySelectorAll(".choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
-function checkBattle(){if(!battle.selected){alert("Choisis une réponse.");return}battle.answered=true;let ok=battle.selected===battle.current.a;if(ok){battle.enemyHp=Math.max(0,battle.enemyHp-(battle.boss?12:22));$("heroFighter").classList.add("attack");$("enemyFighter").classList.add("hit");state.xp+=10;state.stars++}else{battle.heroHp=Math.max(0,battle.heroHp-(battle.boss?15:22));$("enemyFighter").classList.add("attack");$("heroFighter").classList.add("hit")}setTimeout(()=>document.querySelectorAll(".fighter").forEach(x=>x.classList.remove("attack","hit")),500);$("battleFeedback").className="feedback "+(ok?"ok":"ko");$("battleFeedback").innerHTML=ok?`✅ Attaque réussie ! ${battle.current.ex}`:`❌ ${battle.current.ex} Bonne réponse : <b>${battle.current.a}</b>.`;$("attackBtn").classList.add("hidden");$("nextBattleBtn").classList.remove("hidden");updateHp();save()}
+function openScreen(id){["loading","intro","regionSelect","map","school","lesson","training","arenaScreen","battle","badgesScreen","report","ending"].forEach(x=>$(x).classList.toggle("hidden",x!==id));if(id==="map")renderMap();if(id==="badgesScreen")renderBadges();if(id==="report")renderReport()}
+async function init(){try{await Promise.all(["pikachu","bulbasaur","charmander","squirtle"].map(poke));openScreen("intro");stats()}catch(e){$("loading").innerHTML="<h2>Connexion impossible</h2><p>PokéAPI n’a pas pu être chargée. Vérifie la connexion Internet puis recharge la page.</p>"}}
+function chooseRegion(r){region=r;openScreen("map")}
+function arenaUnlocked(i){return !!state.school[region+"-"+i]}
+function leagueUnlocked(){return units[region].every((_,i)=>state.arenas[region+"-"+i])}
+function renderMap(){
+ $("regionName").textContent=region==="fr"?"Kanto – Français":"Johto – Mathématiques";
+ $("mapCanvas").className="mapWrap "+(region==="fr"?"mapFr":"mapMath");
+ const pos=["n1","n2","n3","n4","n5","n6","n7","n8"];
+ $("arenaNodes").innerHTML=units[region].map((u,i)=>`<button class="node ${pos[i]} ${arenaUnlocked(i)?"":"locked"}" onclick="openArena(${i})"><span>${state.arenas[region+"-"+i]?"🏅":"🏟️"}</span>Arène ${i+1}<small>${u[0]}${arenaUnlocked(i)?"":" • École requise"}</small></button>`).join("");
+ $("leagueNode").classList.toggle("locked",!leagueUnlocked());$("leagueStatus").textContent=leagueUnlocked()?"Prête":"8 badges requis";
+}
+function openSchool(){openScreen("school");$("schoolTitle").textContent="École des Dresseurs – "+(region==="fr"?"Français":"Mathématiques");$("schoolUnits").innerHTML=units[region].map((u,i)=>`<div class="unit ${state.school[region+"-"+i]?"done":""}"><h3>${i+1}. ${u[0]}</h3><p>${u[1]}</p><p class="small">${state.school[region+"-"+i]?"✅ Entraînement réussi • Arène débloquée":"Leçon à apprendre puis entraînement obligatoire"}</p><button class="btn ${state.school[region+"-"+i]?"green":""}" onclick="openLesson(${i})">${state.school[region+"-"+i]?"Réviser":"Commencer"}</button></div>`).join("")}
+function openLesson(i){currentUnit=i;let u=units[region][i],l=lessons[u[2]];$("lessonUnit").textContent=`Unité ${i+1} – ${u[0]}`;$("lessonContent").innerHTML=`<h2>${u[1]}</h2><p>${l[0]}</p><div class="example"><b>Exemple :</b> ${l[1]}</div><p><b>Objectif :</b> obtenir au moins 4 bonnes réponses sur 5 pour débloquer l’arène correspondante.</p>`;openScreen("lesson")}
+function speakLesson(){if("speechSynthesis"in window){let u=new SpeechSynthesisUtterance($("lessonContent").innerText);u.lang="fr-FR";u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u)}}
+function startTraining(){train={q:0,score:0,current:null,selected:null};$("trainingTitle").textContent=units[region][currentUnit][0];openScreen("training");renderTraining()}
+function renderTraining(){train.current=makeQuestion(units[region][currentUnit][2],0);train.selected=null;$("trainNum").textContent=train.q+1;$("trainScore").textContent=train.score;$("trainProgress").style.width=(train.q/5*100)+"%";$("trainQuestion").textContent=train.current.q;$("trainChoices").innerHTML=train.current.choices.map(c=>`<button class="choice" onclick="selectTrain(this,'${String(c).replaceAll("'","\\'")}')">${c}</button>`).join("");$("trainFeedback").innerHTML="";$("trainValidate").classList.remove("hidden");$("trainNext").classList.add("hidden")}
+function selectTrain(el,v){train.selected=v;document.querySelectorAll("#trainChoices .choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
+function validateTraining(){if(train.selected===null){alert("Choisis une réponse.");return}let ok=String(train.selected)===String(train.current.a);if(ok)train.score++;$("trainScore").textContent=train.score;$("trainFeedback").className="feedback "+(ok?"ok":"ko");$("trainFeedback").innerHTML=(ok?"✅ Bonne réponse ! ":"❌ Bonne réponse : <b>"+train.current.a+"</b>. ")+train.current.ex+(train.current.steps?`<div class="correction">${train.current.steps}</div>`:"");$("trainValidate").classList.add("hidden");$("trainNext").classList.remove("hidden")}
+function nextTraining(){train.q++;if(train.q<5)return renderTraining();let passed=train.score>=4;if(passed){state.school[region+"-"+currentUnit]=true;state.xp+=30;state.stars+=train.score;save();alert("Entraînement réussi ! L’arène correspondante est débloquée.")}else alert("Il faut au moins 4/5. Relis la leçon puis recommence.");openSchool()}
+function openArena(i){if(!arenaUnlocked(i)){alert("Tu dois d’abord réussir l’unité correspondante à l’École des Dresseurs.");return}currentUnit=i;$("arenaTitle").textContent=`Arène ${i+1} – ${units[region][i][0]}`;$("arenaIntro").innerHTML=`<h2>${units[region][i][1]}</h2><p>Difficulté : ${["Débutant","Débutant +","Intermédiaire","Intermédiaire +","Confirmé","Confirmé +","Expert","Maître"][i]}.</p><p>Le combat contient ${5+i} questions. Les nombres, les pièges et le nombre d’étapes augmentent progressivement.</p>`;openScreen("arenaScreen")}
+async function startArenaBattle(){await startBattle(false)}
+function openLeague(){if(!leagueUnlocked()){alert("Remporte les 8 arènes de cette région.");return}currentUnit=7;startBattle(true)}
+async function startBattle(league){let enemyName=league?"dragonite":pokemonPool[4+(currentUnit%12)],enemy=await poke(enemyName),hero=await poke(state.partner);battle={arena:currentUnit,q:0,total:league?16:5+currentUnit,score:0,heroHp:100,enemyHp:100,current:null,selected:null,enemy:enemyName,league};$("enemyImg").src=enemy.img;$("heroImg").src=hero.img;$("enemyName").textContent=enemy.fr;$("heroName").textContent=hero.fr;$("battleTitle").textContent=league?`Ligue finale – ${region==="fr"?"Français":"Mathématiques"}`:`Arène ${currentUnit+1} – ${units[region][currentUnit][0]}`;openScreen("battle");renderBattle()}
+function renderBattle(){battle.current=makeQuestion(battle.league?"mix":units[region][battle.arena][2],battle.arena);battle.selected=null;$("battleNum").textContent=battle.q+1;$("battleTotal").textContent=battle.total;$("battleQuestion").textContent=battle.current.q;$("battleChoices").innerHTML=battle.current.choices.map(c=>`<button class="choice" onclick="selectBattle(this,'${String(c).replaceAll("'","\\'")}')">${c}</button>`).join("");$("battleFeedback").innerHTML="";$("battleValidate").classList.remove("hidden");$("battleNext").classList.add("hidden");updateHp()}
+function selectBattle(el,v){battle.selected=v;document.querySelectorAll("#battleChoices .choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
+function validateBattle(){if(battle.selected===null){alert("Choisis une réponse.");return}let ok=String(battle.selected)===String(battle.current.a);if(ok){battle.score++;battle.enemyHp=Math.max(0,battle.enemyHp-(100/battle.total+4));$("heroF").classList.add("attack");$("enemyF").classList.add("hit")}else{battle.heroHp=Math.max(0,battle.heroHp-(100/battle.total+5));$("enemyF").classList.add("attack");$("heroF").classList.add("hit")}setTimeout(()=>document.querySelectorAll(".fighter").forEach(x=>x.classList.remove("attack","hit")),500);$("battleFeedback").className="feedback "+(ok?"ok":"ko");$("battleFeedback").innerHTML=(ok?"✅ Attaque réussie ! ":"❌ Bonne réponse : <b>"+battle.current.a+"</b>. ")+battle.current.ex+(battle.current.steps?`<div class="correction">${battle.current.steps}</div>`:"");$("battleValidate").classList.add("hidden");$("battleNext").classList.remove("hidden");updateHp()}
+function nextBattle(){battle.q++;if(battle.q>=battle.total||battle.enemyHp<=0||battle.heroHp<=0)return finishBattle();renderBattle()}
 function updateHp(){$("heroHp").style.width=battle.heroHp+"%";$("enemyHp").style.width=battle.enemyHp+"%"}
-function nextBattle(){battle.q++;if(battle.enemyHp<=0||battle.q>=battle.total||battle.heroHp<=0)return endBattle();renderBattleQ()}
-function endBattle(){let win=battle.enemyHp<=0||battle.heroHp>battle.enemyHp;if(win){if(battle.boss){if(!state.badges.includes("maitre"))state.badges.push("maitre");save();openScreen("ending");return}let key=battle.subject;state.wins[key]=(state.wins[key]||0)+1;if(state.wins[key]>=2&&!state.badges.includes(key))state.badges.push(key);alert("Victoire ! Ton Pokémon gagne de l’XP.")}else alert("Le combat est terminé. Relis les corrections et retente ta chance.");save();openScreen("map")}
-function abandon(){if(confirm("Fuir le combat ?"))openScreen("map")}
-function speakQuestion(){if("speechSynthesis"in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(battle.current.q);u.lang="fr-FR";u.rate=.9;speechSynthesis.speak(u)}}
-async function renderDex(){let names=state.seen.length?state.seen:[state.partner];let cards=[];for(let n of names){let p=await pokemon(n);cards.push(`<div class="dexcard"><img src="${p.img}" alt="${p.fr}"><b>${p.fr}</b><div class="small">${p.types.join(" / ")}</div></div>`)}$("dexGrid").innerHTML=cards.join("")}
-function renderReport(){$("reportContent").innerHTML=`<p><b>XP :</b> ${state.xp}</p><p><b>Étoiles :</b> ${state.stars}</p><p><b>Victoires en français :</b> ${state.wins.fr}</p><p><b>Victoires en maths :</b> ${state.wins.math}</p><p><b>Pokémon rencontrés :</b> ${state.seen.length}</p><p><b>Badges :</b> ${state.badges.join(", ")||"Aucun pour le moment"}</p><button class="btn red" onclick="resetGame()">Recommencer l’aventure</button>`}
-function resetGame(){if(confirm("Effacer toute la sauvegarde ?")){localStorage.removeItem("pokerpg");location.reload()}}
+function finishBattle(){let need=battle.league?12:Math.ceil(battle.total*.7),win=battle.score>=need;if(win){if(battle.league){state.leagues[region]=true;let id="league-"+region;if(!state.badges.includes(id))state.badges.push(id);state.xp+=200;state.stars+=battle.score;save();$("endingText").textContent=`Tu as remporté la Ligue finale de ${region==="fr"?"français à Kanto":"mathématiques à Johto"} avec ${battle.score}/${battle.total}.`;openScreen("ending");return}state.arenas[region+"-"+battle.arena]=true;let id=region+"-"+battle.arena;if(!state.badges.includes(id))state.badges.push(id);state.xp+=50+(battle.arena*10);state.stars+=battle.score;save();alert("Arène remportée ! Badge obtenu.")}else alert(`Combat perdu : ${battle.score}/${battle.total}. Il fallait au moins ${need} bonnes réponses.`);openScreen("map")}
+function speakBattle(){if("speechSynthesis"in window){let u=new SpeechSynthesisUtterance(battle.current.q);u.lang="fr-FR";u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u)}}
+function renderBadges(){$("badgeGrid").innerHTML=["fr","math"].map(r=>`<h3 style="grid-column:1/-1">${r==="fr"?"Kanto – Français":"Johto – Mathématiques"}</h3>`+units[r].map((u,i)=>`<div class="badge ${state.badges.includes(r+"-"+i)?"on":""}"><div style="font-size:2rem">${state.badges.includes(r+"-"+i)?"🏅":"🔒"}</div><b>Arène ${i+1}</b><br><small>${u[0]}</small></div>`).join("")+`<div class="badge ${state.badges.includes("league-"+r)?"on":""}"><div style="font-size:2rem">${state.badges.includes("league-"+r)?"🏆":"🔒"}</div><b>Ligue finale</b></div>`).join("")}
+function renderReport(){$("reportBody").innerHTML=`<p><b>XP :</b> ${state.xp} • <b>Étoiles :</b> ${state.stars}</p>`+["fr","math"].map(r=>`<h3>${r==="fr"?"Kanto – Français":"Johto – Mathématiques"}</h3>`+units[r].map((u,i)=>`<div class="unit ${state.arenas[r+"-"+i]?"done":""}"><b>${i+1}. ${u[0]}</b><br>École : ${state.school[r+"-"+i]?"✅":"❌"} • Arène : ${state.arenas[r+"-"+i]?"✅":"❌"}</div>`).join("")).join("")+`<div style="margin-top:15px"><button class="btn red" onclick="resetAll()">Réinitialiser</button></div>`}
+function resetAll(){if(confirm("Effacer toute la progression ?")){localStorage.removeItem("pokeClassV2");location.reload()}}
+function makeQuestion(kind,level){
+ if(kind==="mix"){let pool=units[region].map(x=>x[2]);kind=pick(pool)}
+ let hard=Math.max(0,level);
+ if(kind==="syn"){return pick([{q:"Quel est l’antonyme de « rapide » ?",a:"lent",choices:shuffle(["lent","joyeux","solide","grand"]),ex:"Un antonyme a un sens contraire."},{q:"Quel mot est de la même famille que « dent » ?",a:"dentiste",choices:shuffle(["dentiste","dedans","danse","dinde"]),ex:"Dent et dentiste ont une racine et un sens communs."}])}
+ if(kind==="sounds"){return pick([{q:"Dans quel mot la lettre c fait-elle le son [s] ?",a:"cerise",choices:shuffle(["cerise","carte","cube","classe"]),ex:"Devant e, i ou y, c fait souvent [s]."},{q:"Quelle liste est dans l’ordre alphabétique ?",a:"chat, cheval, chien",choices:shuffle(["chat, cheval, chien","chien, chat, cheval","cheval, chien, chat","chat, chien, cheval"]),ex:"On compare les lettres de gauche à droite."}])}
+ if(kind==="verbs"){return pick([{q:"Quel est l’infinitif de « nous finissons » ?",a:"finir",choices:shuffle(["finir","finissons","fini","finira"]),ex:"L’infinitif est la forme non conjuguée."},{q:"Complète : Nous ___ au parc.",a:"jouons",choices:shuffle(["jouons","joue","jouez","jouent"]),ex:"Avec nous, la terminaison est souvent -ons."}])}
+ if(kind==="sv"){return pick([{q:"Les enfants ___ dans la cour.",a:"jouent",choices:shuffle(["jouent","joue","jouons","jouez"]),ex:"Le sujet est pluriel."},{q:"Ma sœur et moi ___ un gâteau.",a:"préparons",choices:shuffle(["préparons","prépare","préparent","préparez"]),ex:"Ma sœur et moi = nous."}])}
+ if(kind==="imperfect"){return pick([{q:"Quand j’étais petit, je ___ souvent.",a:"jouais",choices:shuffle(["jouais","joue","jouerai","joué"]),ex:"À l’imparfait avec je : -ais."},{q:"Ils ___ faim.",a:"avaient",choices:shuffle(["avaient","ont","auront","avait"]),ex:"À l’imparfait avec ils : -aient."}])}
+ if(kind==="gn"){return pick([{q:"Choisis le groupe nominal correctement accordé.",a:"les petites maisons",choices:shuffle(["les petites maisons","les petit maisons","les petite maison","le petites maisons"]),ex:"Déterminant, nom et adjectif sont au féminin pluriel."},{q:"Choisis le groupe nominal correctement accordé.",a:"des chats noirs",choices:shuffle(["des chats noirs","des chat noir","des chats noir","des chat noirs"]),ex:"Nom et adjectif sont au pluriel."}])}
+ if(kind==="silent"){return pick([{q:"Quelle est la lettre finale muette de « grand » ?",a:"d",choices:shuffle(["d","t","s","x"]),ex:"On entend le d dans grande."},{q:"Quelle est la lettre finale muette de « long » ?",a:"g",choices:shuffle(["g","c","t","d"]),ex:"On entend le g dans longue."}])}
+ if(kind==="future"){return pick([{q:"Demain, nous ___ au musée.",a:"irons",choices:shuffle(["irons","allons","allions","sommes allés"]),ex:"Demain indique le futur."},{q:"Ils ___ une cabane.",a:"construiront",choices:shuffle(["construiront","construisent","construisaient","construira"]),ex:"Avec ils au futur : -ont."}])}
+ if(kind==="n999a"){let n=rand(100,999);return{q:`Dans ${n}, combien y a-t-il de centaines ?`,a:String(Math.floor(n/100)),choices:shuffle([Math.floor(n/100),Math.floor((n%100)/10),n%10,Math.floor(n/100)+1].map(String)),ex:"Le chiffre des centaines est le premier chiffre."}}
+ if(kind==="n999b"){let a=rand(100,999),b=rand(100,999),ans=a>b?String(a):String(b);return{q:`Quel est le plus grand nombre : ${a} ou ${b} ?`,a:ans,choices:shuffle([String(a),String(b),String(Math.abs(a-b)),String(a+b)]),ex:"Compare d’abord les centaines, puis les dizaines."}}
+ if(kind==="add"){let max=hard<3?300:hard<6?700:999,a=rand(80,max),b=rand(40,max);return{q:`${a} + ${b} = ?`,a:String(a+b),choices:shuffle([a+b,a+b+10,a+b-10,a+b+1].map(String)),ex:"Aligne les colonnes et additionne.",steps:`${a} + ${b} = ${a+b}. Commence par les unités, puis dizaines et centaines.`}}
+ if(kind==="sub"){let max=hard<3?400:999,a=rand(150,max),b=rand(40,a-10);return{q:`${a} − ${b} = ?`,a:String(a-b),choices:shuffle([a-b,a-b+10,a-b-10,a-b+1].map(String)),ex:"Soustrais en commençant par les unités.",steps:`${a} − ${b} = ${a-b}. Vérification : ${a-b} + ${b} = ${a}.`}}
+ if(kind==="shapes"){return pick([{q:"Quel solide possède 6 faces carrées ?",a:"cube",choices:shuffle(["cube","boule","cylindre","pyramide"]),ex:"Le cube possède 6 faces carrées."},{q:"Une figure symétrique peut être partagée en…",a:"deux parties superposables",choices:shuffle(["deux parties superposables","trois nombres","quatre couleurs","une seule ligne"]),ex:"Les deux parties se correspondent comme dans un miroir."}])}
+ if(kind==="measure"){let n=rand(2,9);return{q:`${n} m correspondent à combien de centimètres ?`,a:String(n*100),choices:shuffle([n*100,n*10,n+100,n*1000].map(String)),ex:"1 m = 100 cm.",steps:`${n} × 100 = ${n*100} cm.`}}
+ if(kind==="mult"){let max=hard<4?5:10,a=rand(2,max),b=rand(2,10);return{q:`${a} × ${b} = ?`,a:String(a*b),choices:shuffle([a*b,a*b+a,a*b-b,a+b].map(String)),ex:"Multiplier, c’est faire des groupes égaux.",steps:`${a} groupes de ${b} donnent ${a*b}.`}}
+ if(kind==="problem"){let p=rand(2,6),q=rand(2,8),extra=hard>=6?rand(1,5):0,ans=p*q-extra;return{q:hard>=6?`Un carnet coûte ${p} €. Lina achète ${q} carnets puis utilise un bon de ${extra} €. Combien paie-t-elle ?`:`Un carnet coûte ${p} €. Combien coûtent ${q} carnets ?`,a:String(ans),choices:shuffle([ans,ans+p,ans-extra,ans+q].map(String)),ex:"Multiplie le prix par la quantité"+(hard>=6?", puis retire le bon.":"."),steps:hard>=6?`${p} × ${q} = ${p*q} €, puis ${p*q} − ${extra} = ${ans} €.`:`${p} × ${q} = ${ans} €.`}}
+ return{q:"2 + 2 = ?",a:"4",choices:["4","3","5","6"],ex:"2 + 2 = 4."}
+}
 init();
 </script>
 </body>
