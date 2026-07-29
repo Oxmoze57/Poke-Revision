@@ -1,28 +1,36 @@
-# PokéClasse RPG – Bêta Pokédex
+# PokéClasse — Édition complète
 
-Version prête pour GitHub Pages.
+Version intégrant les éléments discutés :
 
-## Nouveautés
+- page d’accueil entièrement repensée comme un tableau de bord illustré ;
+- grandes cases avec raccourcis vers Kanto, Johto, l’École, les arènes, le Pokédex, les badges, la progression et le défi du jour ;
+- profil du partenaire, XP, étoiles, badges et captures sur l’accueil ;
+- bouton « Continuer l’aventure » et indication de la prochaine étape ;
+- cartes de Kanto et Johto fournies par l’utilisateur ;
+- arènes représentées par des symboles de badges colorés plutôt que par des images de stades ;
+- nom de la ville et du badge accessible au survol ;
+- badges gagnés marqués d’une coche, badges verrouillés grisés ;
+- lecture automatique des questions et des réponses ;
+- bouton « Réécouter » dans les entraînements et les combats ;
+- animations, particules, sons et transitions ;
+- arènes rejouables, Ligues, Pokédex et sauvegarde locale.
 
-- Les 8 arènes de Kanto et les 8 arènes de Johto sont rejouables.
-- Les questions changent à chaque nouvelle partie.
-- Le Pokémon adverse est choisi aléatoirement selon l'arène.
-- Une victoire ajoute le Pokémon rencontré au Pokédex.
-- Une nouvelle rencontre avec la même espèce augmente son compteur.
-- L'École des Dresseurs ne permet jamais de capturer un Pokémon.
-- Les Ligues finales permettent également des captures.
-- La progression existante des versions précédentes reste compatible.
+## Installation GitHub Pages
 
-## Installation sur GitHub
+Envoyez `index.html` ainsi que le dossier `assets` à la racine du dépôt.
 
-1. Créez un nouveau dépôt GitHub.
-2. Envoyez `index.html` et `README.md` à la racine du dépôt.
-3. Ouvrez `Settings`.
-4. Ouvrez `Pages`.
-5. Dans `Build and deployment`, choisissez `Deploy from a branch`.
-6. Choisissez la branche `main` et le dossier `/root`.
-7. Enregistrez et attendez la création du lien public.
+Activez ensuite :
 
-Une connexion Internet est nécessaire, car les images sont chargées depuis PokéAPI.
+`Settings → Pages → Deploy from a branch → main → /root`
 
-Pokémon et les noms associés appartiennent à leurs détenteurs respectifs. Ce projet est une création éducative non officielle.
+Il est indispensable de conserver les chemins :
+
+- `assets/maps/kanto.png`
+- `assets/maps/johto.png`
+- `assets/ui/dashboard-inspiration.png`
+
+Les illustrations Pokémon sont chargées depuis PokéAPI et nécessitent une connexion Internet.
+
+## Mise à jour v2
+
+Les deux grandes cartes Kanto et Johto ont été retirées de la page d’accueil. Elles sont remplacées par un seul raccourci **Régions** qui ouvre l’écran de sélection.
