@@ -1,1 +1,1 @@
-PokéClasse 1.1.0 — Cartes esthétiques
+PokéClasse 1.2.7 — Noms des Pokémon en français
