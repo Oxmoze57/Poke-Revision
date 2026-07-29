@@ -1,3 +1,1 @@
-PokéClasse — Édition finale
-Version : 1.0.0-finale
-Contenu : accueil animé, cartes Kanto/Johto, badges, lecture vocale, combats, Pokédex et sauvegarde locale.
+PokéClasse 1.1.0 — Cartes esthétiques

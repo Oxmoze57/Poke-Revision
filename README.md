@@ -1,27 +1,18 @@
-# PokéClasse — Édition finale
+# PokéClasse — Cartes esthétiques
 
-Application éducative inspirée de l’univers Pokémon, utilisable directement dans un navigateur et compatible avec GitHub Pages.
+Version basée sur la maquette visuelle validée.
 
-## Fonctionnalités
+## Changements
 
-- accueil illustré avec raccourcis ;
-- progression en français à Kanto ;
-- progression en mathématiques à Johto ;
-- cartes régionales fournies pour Kanto et Johto ;
-- badges colorés à la place des icônes d’arène ;
-- leçons, entraînements et combats ;
-- lecture automatique des questions et des réponses ;
-- bouton pour réécouter une question ;
-- animations de transition, d’attaque, d’impact et de victoire ;
-- effets sonores désactivables ;
-- Pokédex, XP, étoiles et badges ;
-- arènes rejouables ;
-- sauvegarde locale automatique.
+- écran Régions transformé en deux grandes cartes illustrées ;
+- cartes Kanto et Johto découpées depuis la maquette esthétique ;
+- progression et prochaine étape affichées sur chaque région ;
+- cartes interactives conservées ;
+- zones des badges cliquables sans ajouter de symboles par-dessus l’illustration ;
+- toutes les fonctions précédentes restent présentes : leçons, arènes, lecture vocale, animations, combats, Pokédex et sauvegarde.
 
-## Publication
+## Publication GitHub Pages
 
-Consultez `MISE-A-JOUR-GITHUB.md` pour les étapes détaillées.
+Copiez tous les fichiers de l’archive à la racine du dépôt en conservant le dossier `assets`.
 
-Les illustrations Pokémon sont chargées depuis PokéAPI et nécessitent une connexion Internet.
-
-Projet éducatif non officiel. Pokémon et les noms associés appartiennent à leurs ayants droit.
+Puis faites un commit et un push depuis GitHub Desktop.

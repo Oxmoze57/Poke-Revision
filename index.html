@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PokéClasse — Édition finale</title>
+<title>PokéClasse — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.0.0-finale">
+  <meta name="pokeclasse-version" content="1.1.0-cartes-esthetiques">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -396,10 +396,58 @@ main{max-width:1180px}
  .mapWrap .node.school,.mapWrap .node.league{width:72px;min-height:55px}
 }
 
+
+/* ===== Cartes esthétiques ===== */
+.regionHub{animation:cardIn .45s both}
+.regionHeader{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:16px}
+.regionHeader h1{margin:.3rem 0 .2rem;font-size:2rem}
+.regionHeader p{margin:0}
+.regionCardGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.regionCardVisual{
+ position:relative;min-height:660px;border-radius:25px;overflow:hidden;border:3px solid #fff;
+ background-size:cover;background-position:center;box-shadow:0 22px 50px #082f4940;
+}
+.kantoVisual{background-image:url("assets/maps/kanto-esthetique.jpg")}
+.johtoVisual{background-image:url("assets/maps/johto-esthetique.jpg")}
+.regionCardOverlay{position:absolute;inset:0;background:linear-gradient(#041d3a15 45%,#041d3adf 82%,#041d3af5)}
+.regionCardTop,.regionCardBottom{position:absolute;left:0;right:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px;color:#fff;text-shadow:0 2px 5px #0008}
+.regionCardTop{top:0;background:linear-gradient(#041d3ac9,transparent)}
+.regionCardTop h2{font-size:2rem;margin:0}.regionCardTop span{font-weight:800}
+.regionStatus{padding:7px 11px;border-radius:99px;background:#082f49d9;border:1px solid #ffffff80}
+.regionCardBottom{bottom:0;background:#062f54e8;backdrop-filter:blur(8px)}
+.regionCardBottom small,.regionCardBottom strong{display:block}
+.regionCardBottom strong{font-size:1.15rem;color:#fde047;margin-top:3px}
+.regionAdvice{display:flex;align-items:center;gap:12px;margin-top:16px}.regionAdvice>span{font-size:2.2rem}.regionAdvice p{margin:.25rem 0 0}
+.mapWrap{aspect-ratio:584/670;background:#0a3557;border:3px solid #fff}
+.regionArtwork img{width:100%;height:100%;object-fit:cover}
+.mapWrap .node{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ width:72px;height:72px;min-height:72px;opacity:.02;filter:none!important;
+}
+.mapWrap .node:hover,.mapWrap .node:focus{opacity:.2;background:#fff!important;outline:4px solid #fde047!important}
+.mapWrap .node .badgeGlyph{opacity:0}
+.mapWrap .node.school,.mapWrap .node.league{
+ opacity:.9;background:#062f54e8!important;color:#fff!important;border:2px solid #fff!important;
+ box-shadow:0 8px 18px #0004!important
+}
+.mapWrap .node.school span,.mapWrap .node.league span{opacity:1}
+.mapWrap .node.locked{opacity:.01}
+.mapTip{background:#062f54ef}
+.mapFr .school{left:3%;top:3%}.mapFr .league{left:2%;top:84%}
+.mapFr .n1{left:23%;top:11%}.mapFr .n2{left:76%;top:22%}.mapFr .n3{left:15%;top:44%}.mapFr .n4{left:42%;top:25%}
+.mapFr .n5{left:62%;top:9%}.mapFr .n6{left:55%;top:36%}.mapFr .n7{left:17%;top:69%}.mapFr .n8{left:58%;top:72%}
+.mapMath .school{left:3%;top:84%}.mapMath .league{left:78%;top:3%}
+.mapMath .n1{left:57%;top:11%}.mapMath .n2{left:30%;top:38%}.mapMath .n3{left:78%;top:36%}.mapMath .n4{left:48%;top:53%}
+.mapMath .n5{left:73%;top:31%}.mapMath .n6{left:13%;top:11%}.mapMath .n7{left:60%;top:70%}.mapMath .n8{left:83%;top:68%}
+@media(max-width:800px){
+ .regionCardGrid{grid-template-columns:1fr}.regionCardVisual{min-height:520px}
+ .regionHeader{align-items:flex-start;flex-direction:column}
+}
+
 </style>
 </head>
 <body><div id="fxLayer" class="fx-layer"></div><button id="soundToggle" class="sound-toggle" title="Activer ou couper les sons">🔊</button>
-<header><div class="top"><div class="logo">⚡ PokéClasse <small class="edition">ÉDITION FINALE</small></div><div class="stats"><span class="pill">⭐ <b id="stars">0</b></span><span class="pill">XP <b id="xp">0</b></span><span class="pill">🏅 <b id="badges">0</b></span></div></div></header>
+<header><div class="top"><div class="logo">⚡ PokéClasse <small class="edition">CARTES ESTHÉTIQUES</small></div><div class="stats"><span class="pill">⭐ <b id="stars">0</b></span><span class="pill">XP <b id="xp">0</b></span><span class="pill">🏅 <b id="badges">0</b></span></div></div></header>
 <main>
 <section id="loading" class="card"><h2>Chargement de PokéAPI…</h2></section>
 
@@ -464,12 +512,44 @@ main{max-width:1180px}
   </div>
 </section>
 
-<section id="regionSelect class="card hidden">
-<div class="row"><button class="btn ghost" onclick="openScreen('intro')">← Accueil</button></div>
-<div class="grid">
-<div class="choiceWorld frWorld"><h2>Kanto</h2><p>Parcours de français : vocabulaire, conjugaison, accords, orthographe et lecture.</p><button class="btn yellow" onclick="chooseRegion('fr')">Entrer à Kanto</button></div>
-<div class="choiceWorld mathWorld"><h2>Johto</h2><p>Parcours de mathématiques : nombres, calcul, géométrie, mesures, problèmes et repérage.</p><button class="btn yellow" onclick="chooseRegion('math')">Entrer à Johto</button></div>
-</div>
+
+<section id="regionSelect" class="hidden regionHub">
+  <div class="regionHeader card">
+    <div>
+      <span class="homeKicker">CHOISIS TA DESTINATION</span>
+      <h1>Régions</h1>
+      <p>Commence ou reprends ton aventure à Kanto ou Johto.</p>
+    </div>
+    <button class="btn ghost" onclick="openScreen('intro')">⌂ Accueil</button>
+  </div>
+  <div class="regionCardGrid">
+    <article class="regionCardVisual kantoVisual">
+      <div class="regionCardOverlay"></div>
+      <div class="regionCardTop">
+        <div><h2>Kanto</h2><span>8 arènes • Français</span></div>
+        <span class="regionStatus" id="kantoProgress">0 / 8 badges</span>
+      </div>
+      <div class="regionCardBottom">
+        <div><small>Prochaine étape</small><strong id="kantoNext">École des Dresseurs</strong></div>
+        <button class="btn blue" onclick="chooseRegion('fr')">Voir la région →</button>
+      </div>
+    </article>
+    <article class="regionCardVisual johtoVisual">
+      <div class="regionCardOverlay"></div>
+      <div class="regionCardTop">
+        <div><h2>Johto</h2><span>8 arènes • Mathématiques</span></div>
+        <span class="regionStatus" id="johtoProgress">0 / 8 badges</span>
+      </div>
+      <div class="regionCardBottom">
+        <div><small>Prochaine étape</small><strong id="johtoNext">École des Dresseurs</strong></div>
+        <button class="btn green" onclick="chooseRegion('math')">Voir la région →</button>
+      </div>
+    </article>
+  </div>
+  <div class="card regionAdvice">
+    <span>💡</span>
+    <div><b>Conseil du Professeur</b><p>Commence par l’École des Dresseurs pour débloquer chaque arène.</p></div>
+  </div>
 </section>
 
 <section id="map" class="hidden">
@@ -560,7 +640,18 @@ const cache={},$=x=>document.getElementById(x),pick=a=>a[Math.floor(Math.random(
 async function poke(name){if(cache[name])return cache[name];let r=await fetch(API+name);let d=await r.json();return cache[name]={name,fr:frNames[name]||name,img:d.sprites.other["official-artwork"].front_default||d.sprites.front_default}}
 function save(){localStorage.setItem("pokeClassV2",JSON.stringify(state));stats()}
 function stats(){$("stars").textContent=state.stars;$("xp").textContent=state.xp;$("badges").textContent=state.badges.length}
-function openScreen(id){["loading","intro","regionSelect","map","school","lesson","training","arenaScreen","battle","pokedexScreen","badgesScreen","report","ending"].forEach(x=>$(x).classList.toggle("hidden",x!==id));if(id==="intro")renderHome();if(id==="map")renderMap();if(id==="pokedexScreen")renderPokedex();if(id==="badgesScreen")renderBadges();if(id==="report")renderReport()}
+function openScreen(id){
+ if("speechSynthesis" in window)speechSynthesis.cancel();
+ ["loading","intro","regionSelect","map","school","lesson","training","arenaScreen","battle","pokedexScreen","badgesScreen","report","ending"].forEach(x=>{
+  const screen=$(x);
+  if(screen)screen.classList.toggle("hidden",x!==id);
+ });
+ if(id==="intro")renderHome();if(id==="regionSelect")renderRegionHub();
+ if(id==="map")renderMap();
+ if(id==="pokedexScreen")renderPokedex();
+ if(id==="badgesScreen")renderBadges();
+ if(id==="report")renderReport();
+}
 async function init(){try{await Promise.all(["pikachu","bulbasaur","charmander","squirtle"].map(poke));openScreen("intro");stats()}catch(e){$("loading").innerHTML="<h2>Connexion impossible</h2><p>PokéAPI n’a pas pu être chargée. Vérifie la connexion Internet puis recharge la page.</p>"}}
 
 function completedInRegion(r){return units[r].filter((_,i)=>state.arenas[r+"-"+i]).length}
@@ -606,12 +697,20 @@ function dailyChallenge(){
  openLesson(currentUnit);
 }
 
+function renderRegionHub(){
+ const frDone=completedInRegion("fr"),mathDone=completedInRegion("math");
+ const frNext=regionMapData.fr.cities[nextUnitIndex("fr")],mathNext=regionMapData.math.cities[nextUnitIndex("math")];
+ if($("kantoProgress"))$("kantoProgress").textContent=`${frDone} / 8 badges`;
+ if($("johtoProgress"))$("johtoProgress").textContent=`${mathDone} / 8 badges`;
+ if($("kantoNext"))$("kantoNext").textContent=frDone===8?"Ligue de Kanto":frNext;
+ if($("johtoNext"))$("johtoNext").textContent=mathDone===8?"Ligue de Johto":mathNext;
+}
 function chooseRegion(r){region=r;openScreen("map")}
 function arenaUnlocked(i){return !!state.school[region+"-"+i]}
 function leagueUnlocked(){return units[region].every((_,i)=>state.arenas[region+"-"+i])}
 const regionMapData={
  fr:{
-  image:"assets/maps/kanto.png",
+  image:"assets/maps/kanto-esthetique.jpg",
   cities:["Argenta","Azuria","Carmin-sur-Mer","Céladopole","Parmanie","Safrania","Cramois’Île","Jadielle"],
   badges:[
    ["badge-rock","◆","Badge Roche"],["badge-water","💧","Badge Cascade"],["badge-electric","⚡","Badge Foudre"],["badge-grass","🌿","Badge Prisme"],
@@ -619,7 +718,7 @@ const regionMapData={
   ]
  },
  math:{
-  image:"assets/maps/johto.png",
+  image:"assets/maps/johto-esthetique.jpg",
   cities:["Mauville","Écorcia","Doublonville","Rosalia","Irisia","Oliville","Acajou","Ébènelle"],
   badges:[
    ["badge-flying","🪽","Badge Zéphyr"],["badge-bug","🌿","Badge Essaim"],["badge-normal","◇","Badge Plaine"],["badge-ghost","👻","Badge Brume"],
