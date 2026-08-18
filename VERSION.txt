@@ -1,1 +1,2 @@
-PokéClasse 1.4.2 — Lecture audio désactivée pour la leçon 1 et l’arène 1 de Hoenn
+PokéClasse — Version finale 1.5.2
+Kanto + Johto + Hoenn CE2 + Défi des Légendaires avec combats animés.

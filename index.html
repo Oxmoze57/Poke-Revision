@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.4.2-hoenn-lecture-autonome">
+  <meta name="pokeclasse-version" content="1.5.2-finale">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -851,9 +851,91 @@ main{max-width:1180px}
 .readToggle.readingLocked::after{content:" • désactivée pour cette arène";font-size:.68rem;font-weight:900}
 
 #lessonSpeakButton.readingDisabled{opacity:.72;cursor:not-allowed;background:#e8eef2!important;color:#52616b!important}
+
+.legendaryShortcut{background:radial-gradient(circle at 70% 20%,#ffe06655,transparent 25%),linear-gradient(135deg,#25124a,#5b217a 55%,#0d6670);position:relative;overflow:hidden}
+.legendaryShortcut:before{content:"✦";position:absolute;right:18px;top:8px;font-size:5rem;color:#fff4;transform:rotate(18deg)}
+.legendaryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.legendaryRegionCard{padding:18px;border-radius:22px;background:linear-gradient(145deg,#101c35,#263d66);color:white;border:2px solid #ffffff22;box-shadow:0 12px 30px #0018}
+.legendaryRegionCard.locked{filter:grayscale(.8);opacity:.65}
+.legendaryRegionCard h3{font-size:1.35rem;margin:.3rem 0}
+.legendaryRegionCard .legendList{font-size:.78rem;opacity:.85;min-height:42px}
+.legendaryEncounter{display:flex;align-items:center;gap:22px;padding:16px;margin:10px 0 18px;border-radius:24px;background:radial-gradient(circle at 20% 30%,#fff4,transparent 30%),linear-gradient(135deg,#32145e,#0b6b78);color:white}
+.legendaryEncounter img{width:150px;height:150px;object-fit:contain;image-rendering:auto;filter:drop-shadow(0 10px 12px #0007)}
+.legendaryShiny{animation:legendGlow 1.2s ease-in-out infinite alternate}
+@keyframes legendGlow{from{filter:drop-shadow(0 0 7px #fff) drop-shadow(0 0 12px #ffd43b)}to{filter:drop-shadow(0 0 15px #fff) drop-shadow(0 0 28px #ffe066)}}
+@media(max-width:800px){.legendaryGrid{grid-template-columns:1fr}.legendaryEncounter img{width:110px;height:110px}}
+
+
+#legendary{max-width:1100px;margin:20px auto}
+#legendary .legendaryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+#legendary .legendaryRegionCard{padding:18px;border-radius:22px;background:linear-gradient(145deg,#101c35,#263d66);color:#fff;border:2px solid #ffffff22;box-shadow:0 12px 30px #0018}
+#legendary .legendaryRegionCard.locked{filter:grayscale(.8);opacity:.65}
+#legendary .legendaryEncounter{display:flex;align-items:center;gap:22px;padding:16px;margin:14px 0;border-radius:24px;background:radial-gradient(circle at 20% 30%,#fff4,transparent 30%),linear-gradient(135deg,#32145e,#0b6b78);color:#fff}
+#legendary .legendaryEncounter img{width:160px;height:160px;object-fit:contain;filter:drop-shadow(0 10px 12px #0007)}
+#legendary .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+#legendary .choices button{padding:13px}
+@media(max-width:760px){#legendary .legendaryGrid{grid-template-columns:1fr}#legendary .choices{grid-template-columns:1fr}#legendary .legendaryEncounter img{width:110px;height:110px}}
+
+
+/* ===== Combat animé des Légendaires ===== */
+#legendary .legendaryBattlefield{
+ position:relative;min-height:470px;margin:14px 0 18px;border-radius:26px;overflow:hidden;
+ background:
+   radial-gradient(circle at 75% 22%,#ffffff55 0 4%,transparent 20%),
+   radial-gradient(circle at 25% 78%,#ffffff35 0 5%,transparent 22%),
+   linear-gradient(180deg,#7bc8f0 0 53%,#dff5ff 53% 56%,#65b85c 56% 100%);
+ border:4px solid #fff;box-shadow:inset 0 -30px 55px #12451f33,0 18px 40px #0004;
+}
+#legendary .legendaryBattlefield::before{
+ content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+ background:
+ radial-gradient(circle,#fff 0 2px,transparent 3px) 10px 15px/120px 100px,
+ radial-gradient(circle,#fff 0 1px,transparent 2px) 55px 35px/160px 130px;
+ animation:legendSkyDrift 16s linear infinite;
+}
+@keyframes legendSkyDrift{to{background-position:250px 15px,310px 35px}}
+.legendFighter{position:absolute;z-index:4;text-align:center;transition:transform .25s,filter .25s}
+.legendFighter img{width:min(31vw,235px);height:min(31vw,235px);object-fit:contain;filter:drop-shadow(0 17px 10px #0005);animation:legendIdle 2.4s ease-in-out infinite}
+.legendEnemy{right:6%;top:24px}.legendHero{left:5%;bottom:18px}
+.legendHero img{animation-delay:-1.1s}
+@keyframes legendIdle{50%{transform:translateY(-10px) scale(1.025)}}
+.legendHpBox{min-width:225px;padding:9px 11px;border-radius:15px;background:#fffffff0;border:4px solid #253f52;box-shadow:0 9px 22px #0003}
+.legendNameRow{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.83rem}
+.legendNameRow strong{font-size:1rem}.legendNameRow span{font-size:.68rem;color:#647887}
+#legendaryEnemyHp,#legendaryHeroHp{width:100%;transition:width .45s ease,background .3s}
+.legendVs{position:absolute;z-index:3;left:50%;top:47%;transform:translate(-50%,-50%);font-size:2rem;font-weight:1000;color:#fff;text-shadow:0 4px 8px #123;opacity:.75}
+.legendBattleStatus{position:absolute;z-index:6;left:50%;top:12px;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:#092f4ddc;color:#fff;padding:6px 10px;border-radius:99px;white-space:nowrap}
+.legendAura{position:absolute;width:270px;height:110px;border-radius:50%;filter:blur(5px);opacity:.3;z-index:1;animation:legendAuraPulse 2s ease-in-out infinite}
+.auraEnemy{right:2%;top:185px;background:#f5dd5c}.auraHero{left:2%;bottom:5px;background:#6ed8ff;animation-delay:-1s}
+@keyframes legendAuraPulse{50%{transform:scale(1.14);opacity:.55}}
+.legendFighter.legendAttackHero{animation:legendAttackHero .6s cubic-bezier(.2,.8,.3,1)}
+.legendFighter.legendAttackEnemy{animation:legendAttackEnemy .6s cubic-bezier(.2,.8,.3,1)}
+@keyframes legendAttackHero{45%{transform:translate(80px,-25px) scale(1.12) rotate(-4deg)}}
+@keyframes legendAttackEnemy{45%{transform:translate(-80px,25px) scale(1.12) rotate(4deg)}}
+.legendFighter.legendHit{animation:legendHit .6s}
+@keyframes legendHit{15%,45%,75%{transform:translateX(13px);filter:brightness(2.2) saturate(1.6)}30%,60%{transform:translateX(-13px)}}
+.legendImpact{position:absolute;z-index:8;width:24px;height:24px;border-radius:50%;opacity:0;pointer-events:none}
+.legendImpact.showEnemy{right:25%;top:45%;animation:legendImpactBurst .55s}
+.legendImpact.showHero{left:25%;bottom:32%;animation:legendImpactBurst .55s}
+@keyframes legendImpactBurst{
+ 0%{opacity:1;transform:scale(.2);box-shadow:0 0 0 0 #fff,0 0 0 0 #ffe066}
+ 55%{opacity:1;transform:scale(1.8);box-shadow:0 0 0 18px #ffffff55,0 0 0 35px #ffe06633}
+ 100%{opacity:0;transform:scale(3)}
+}
+.legendCaptureFlash{animation:legendCaptureFlash 1.2s ease}
+@keyframes legendCaptureFlash{0%,100%{filter:none}35%{filter:brightness(2.3)}60%{filter:brightness(.7)}}
+@media(max-width:760px){
+ #legendary .legendaryBattlefield{min-height:500px}
+ .legendFighter img{width:145px;height:145px}
+ .legendHpBox{min-width:150px;padding:6px 8px}
+ .legendEnemy{right:3%;top:55px}.legendHero{left:3%;bottom:28px}
+ .legendBattleStatus{top:8px;font-size:.7rem}
+}
+
 </style>
 </head>
-<body><div id="fxLayer" class="fx-layer"></div><button id="soundToggle" class="sound-toggle" title="Activer ou couper les sons">🔊</button>
+<body>
+<div id="fxLayer" class="fx-layer"></div><button id="soundToggle" class="sound-toggle" title="Activer ou couper les sons">🔊</button>
 <header><div class="top"><div class="logo">⚡ PokéClasse <small class="edition">CARTES ESTHÉTIQUES</small></div><div class="stats"><span class="pill">⭐ <b id="stars">0</b></span><span class="pill">XP <b id="xp">0</b></span><span class="pill">🏅 <b id="badges">0</b></span></div></div></header>
 <main>
 <section id="loading" class="card"><h2>Chargement de PokéAPI…</h2></section>
@@ -892,7 +974,10 @@ main{max-width:1180px}
     <button class="shortcutCard hoennShortcut" onclick="chooseRegion('ce2')">
       <span class="shortcutShade"></span><span class="shortcutText"><b>🌴 Hoenn CE2</b><small>Nouveau programme • 8 arènes</small></span>
     </button>
-    <button class="shortcutCard schoolCard" onclick="homeOpenSchool()">
+    <button class="shortcutCard legendaryShortcut" onclick="openLegendaryHub()">
+  <span class="shortcutShade"></span><span class="shortcutText"><b>✨ Défi des Légendaires</b><small>Débloqué après les Ligues</small></span>
+</button>
+<button class="shortcutCard schoolCard" onclick="homeOpenSchool()">
       <span class="shortcutShade"></span><span class="shortcutText"><b>🏫 École des Dresseurs</b><small>Leçons et entraînements</small></span>
     </button>
     <button class="shortcutCard arenaCard" onclick="homeOpenArenas()">
@@ -1080,6 +1165,49 @@ main{max-width:1180px}
 
 <section id="badgesScreen" class="card hidden"><div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2>Badges</h2></div><div id="badgeGrid" class="badgeGrid"></div></section>
 <section id="report" class="card hidden"><div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2>Progrès</h2></div><div id="reportBody"></div></section>
+<section id="legendary" class="card hidden">
+  <div class="row">
+    <div>
+      <span class="homeKicker">ÉPREUVE ULTIME</span>
+      <h1>✨ Défi des Légendaires</h1>
+      <p>10 à 20 questions aléatoires. Réussis au moins 75 % pour capturer le Pokémon rencontré.</p>
+    </div>
+    <button class="btn ghost" onclick="openScreen('intro')">← Accueil</button>
+  </div>
+  <div id="legendaryRegionCards" class="legendaryGrid"></div>
+
+  <div id="legendaryBattlePanel" class="card hidden" style="margin-top:16px">
+    <div class="row">
+      <div><span class="homeKicker" id="legendaryBattleRegion"></span><h2 id="legendaryBattleTitle"></h2></div>
+      <span class="pill" id="legendaryScore">0 / 0</span>
+    </div>
+    <div id="legendaryBattlefield" class="legendaryBattlefield">
+      <div class="legendAura auraEnemy"></div>
+      <div class="legendAura auraHero"></div>
+      <div id="legendEnemyF" class="legendFighter legendEnemy">
+        <div class="legendHpBox">
+          <div class="legendNameRow"><strong id="legendaryPokemonName">???</strong><span>★ Légendaire</span></div>
+          <div class="hp"><div id="legendaryEnemyHp"></div></div>
+        </div>
+        <img id="legendaryPokemonImg" alt="Pokémon légendaire">
+      </div>
+      <div id="legendHeroF" class="legendFighter legendHero">
+        <img id="legendaryHeroImg" alt="Pokémon partenaire">
+        <div class="legendHpBox">
+          <div class="legendNameRow"><strong id="legendaryHeroName">Partenaire</strong><span>Ton équipe</span></div>
+          <div class="hp"><div id="legendaryHeroHp"></div></div>
+        </div>
+      </div>
+      <div class="legendVs">VS</div>
+      <div class="legendBattleStatus"><span class="ce2Tag">RENCONTRE LÉGENDAIRE</span><span id="legendaryProgress"></span></div>
+      <div id="legendImpact" class="legendImpact"></div>
+    </div>
+    <div id="legendaryQuestion" class="quizPanel"></div>
+    <div id="legendaryChoices" class="choices"></div>
+    <div id="legendaryFeedback" class="feedback hidden"></div>
+  </div>
+</section>
+
 <section id="ending" class="card hidden"><h2>🏆 Ligue remportée !</h2><p id="endingText" class="lessonBox"></p><button class="btn green" onclick="openScreen('map')">Retour à la carte</button></section>
 </main>
 <script>
@@ -1176,6 +1304,7 @@ async function poke(name){
  }
  frenchName=frenchName||name.charAt(0).toUpperCase()+name.slice(1);
  return cache[name]={
+  id:d.id,
   name,
   fr:frenchName,
   img:d.sprites.other["official-artwork"].front_default||d.sprites.front_default
@@ -1185,7 +1314,7 @@ function save(){localStorage.setItem("pokeClassV2",JSON.stringify(state));stats(
 function stats(){$("stars").textContent=state.stars;$("xp").textContent=state.xp;$("badges").textContent=state.badges.length}
 function openScreen(id){
  if("speechSynthesis" in window)speechSynthesis.cancel();
- ["loading","intro","regionSelect","map","school","lesson","training","arenaScreen","battle","pokedexScreen","badgesScreen","report","ending"].forEach(x=>{
+ ["loading","intro","regionSelect","map","school","lesson","training","arenaScreen","battle","pokedexScreen","badgesScreen","report","legendary","ending"].forEach(x=>{
   const screen=$(x);
   if(screen)screen.classList.toggle("hidden",x!==id);
  });
@@ -1487,7 +1616,7 @@ async function loadRegionalDex(r){
     const response=await fetch(url);
     if(!response.ok)throw new Error("Pokédex régional indisponible");
     const payload=await response.json();
-    regionalDexCache[r]=payload.results.map(p=>p.name);
+    regionalDexCache[r]=payload.results.map(p=>p.name).filter(name=>!(legendaryPools[r]||[]).includes(name));
     return regionalDexCache[r];
   }catch(error){
     console.warn("Impossible de charger le Pokédex régional complet.",error);
@@ -1496,6 +1625,7 @@ async function loadRegionalDex(r){
       : r==="math"
         ? ["chikorita","cyndaquil","totodile","sentret","hoothoot","mareep","marill","sudowoodo","wooper","misdreavus","sneasel","teddiursa","skarmory","houndour","larvitar","lugia","ho-oh","celebi"]
         : ["treecko","grovyle","sceptile","torchic","combusken","blaziken","mudkip","marshtomp","swampert","poochyena","zigzagoon","wurmple","ralts","shroomish","slakoth","makuhita","azurill","skitty","sableye","mawile","aron","meditite","electrike","plusle","minun","gulpin","carvanha","wailmer","numel","torkoal","spoink","trapinch","cacnea","swablu","zangoose","seviper","lunatone","solrock","barboach","corphish","baltoy","lileep","anorith","feebas","castform","kecleon","shuppet","duskull","tropius","absol","snorunt","spheal","clamperl","relicanth","luvdisc","bagon","beldum","regirock","latias","latios","kyogre","groudon","rayquaza","jirachi","deoxys"];
+    regionalDexCache[r]=regionalDexCache[r].filter(name=>!(legendaryPools[r]||[]).includes(name));
     return regionalDexCache[r];
   }
 }
@@ -1517,13 +1647,7 @@ async function chooseArenaPokemon(r,i){
 async function chooseLeaguePokemon(r){
   const dex=await loadRegionalDex(r);
   const unseen=dex.filter(name=>!state.pokedex[name]);
-  if(unseen.length)return pick(unseen);
-  const rare=r==="fr"
-    ? ["articuno","zapdos","moltres","mewtwo","mew"]
-    : r==="math"
-      ? ["raikou","entei","suicune","lugia","ho-oh","celebi"]
-      : ["regirock","regice","registeel","latias","latios","kyogre","groudon","rayquaza","jirachi","deoxys"];
-  return pick(rare);
+  return pick(unseen.length?unseen:dex);
 }
 
 function capturedCountForRegion(r){
@@ -1631,6 +1755,179 @@ function renderReport(){
   ).join("")+
   `<div style="margin-top:15px"><button class="btn red" onclick="resetAll()">Réinitialiser</button></div>`;
 }
+
+const legendaryPools={
+ fr:["articuno","zapdos","moltres","mew","mewtwo"],
+ math:["raikou","entei","suicune","lugia","ho-oh","celebi"],
+ ce2:["regirock","regice","registeel","latias","latios","kyogre","groudon","rayquaza","jirachi","deoxys"]
+};
+const legendaryFrench={
+ articuno:"Artikodin",zapdos:"Électhor",moltres:"Sulfura",mew:"Mew",mewtwo:"Mewtwo",
+ raikou:"Raikou",entei:"Entei",suicune:"Suicune",lugia:"Lugia","ho-oh":"Ho-Oh",celebi:"Celebi",
+ regirock:"Regirock",regice:"Regice",registeel:"Registeel",latias:"Latias",latios:"Latios",
+ kyogre:"Kyogre",groudon:"Groudon",rayquaza:"Rayquaza",jirachi:"Jirachi",deoxys:"Deoxys"
+};
+let legendaryBattle=null;
+
+function legendaryUnlocked(r){return !!state.leagues[r]}
+function legendaryCaptured(name){return !!state.pokedex[name]}
+
+function openLegendaryHub(){
+ openScreen("legendary");
+ $("legendaryBattlePanel").classList.add("hidden");
+ const meta={fr:["Kanto","Français CE1"],math:["Johto","Mathématiques CE1"],ce2:["Hoenn","Français + Mathématiques CE2"]};
+ $("legendaryRegionCards").innerHTML=allRegions().map(r=>{
+   const unlocked=legendaryUnlocked(r), pool=legendaryPools[r];
+   const caught=pool.filter(legendaryCaptured).length;
+   return `<div class="legendaryRegionCard ${unlocked?"":"locked"}">
+     <span class="eyebrow">${meta[r][0]}</span><h3>${meta[r][1]}</h3>
+     <p>${unlocked?`${caught} / ${pool.length} légendaires capturés`:"🔒 Remporte d’abord la Ligue de cette région."}</p>
+     <p class="legendList">${pool.map(x=>legendaryCaptured(x)?legendaryFrench[x]:"❔").join(" • ")}</p>
+     <button class="btn ${unlocked?"yellow":"ghost"}" ${unlocked?`onclick="startLegendaryChallenge('${r}')"`:"disabled"}>${unlocked?"Lancer le défi":"Défi verrouillé"}</button>
+   </div>`;
+ }).join("");
+}
+
+async function chooseLegendary(r){
+ const pool=legendaryPools[r], unseen=pool.filter(x=>!legendaryCaptured(x));
+ // Rayquaza chromatique : ultra-rare et uniquement après avoir déjà capturé Rayquaza normal.
+ // 1 chance sur 100 par victoire potentielle à Hoenn.
+ if(r==="ce2" && legendaryCaptured("rayquaza") && Math.random()<0.01){
+   return {name:"rayquaza",shiny:true,display:"Rayquaza chromatique"};
+ }
+ return {name:pick(unseen.length?unseen:pool),shiny:false};
+}
+
+async function startLegendaryChallenge(r){
+ region=r;
+ const encounter=await chooseLegendary(r);
+ const mon=await poke(encounter.name);
+ const hero=await poke(state.partner||"pikachu");
+ const total=rand(10,20);
+ legendaryBattle={region:r,encounter,mon,hero,total,q:0,score:0,used:[],current:null,heroHp:100,enemyHp:100};
+ $("legendaryBattlePanel").classList.remove("hidden");
+ $("legendaryBattleRegion").textContent=regionName(r);
+ $("legendaryBattleTitle").textContent=`Défi des Légendaires • ${total} questions`;
+ $("legendaryPokemonName").textContent=encounter.display||mon.fr||legendaryFrench[encounter.name]||encounter.name;
+ $("legendaryHeroName").textContent=hero.fr;
+ $("legendaryHeroImg").src=hero.img;
+ const img=$("legendaryPokemonImg");
+ img.classList.toggle("legendaryShiny",encounter.shiny);
+ img.src=encounter.shiny
+   ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${mon.id}.png`
+   : mon.img;
+ img.onerror=()=>{img.onerror=null;img.src=mon.img};
+ updateLegendaryHp();
+ animateLegendaryEntrance();
+ renderLegendaryQuestion();
+}
+
+function updateLegendaryHp(){
+ const b=legendaryBattle;if(!b)return;
+ const eh=$("legendaryEnemyHp"),hh=$("legendaryHeroHp");
+ eh.style.width=Math.max(0,b.enemyHp)+"%";
+ hh.style.width=Math.max(0,b.heroHp)+"%";
+ eh.style.background=b.enemyHp<25?"#ef4444":b.enemyHp<50?"#f59e0b":"#22c55e";
+ hh.style.background=b.heroHp<25?"#ef4444":b.heroHp<50?"#f59e0b":"#22c55e";
+}
+function animateLegendaryEntrance(){
+ const enemy=$("legendEnemyF"),hero=$("legendHeroF");
+ enemy.animate([{transform:"translateX(170px)",opacity:0},{transform:"translateX(0)",opacity:1}],{duration:650,easing:"cubic-bezier(.2,.8,.3,1)"});
+ hero.animate([{transform:"translateX(-170px)",opacity:0},{transform:"translateX(0)",opacity:1}],{duration:650,easing:"cubic-bezier(.2,.8,.3,1)",delay:120,fill:"backwards"});
+}
+function animateLegendaryTurn(ok){
+ const b=legendaryBattle;if(!b)return;
+ const attacker=$(ok?"legendHeroF":"legendEnemyF"),target=$(ok?"legendEnemyF":"legendHeroF"),impact=$("legendImpact");
+ attacker.classList.add(ok?"legendAttackHero":"legendAttackEnemy");
+ setTimeout(()=>{
+  target.classList.add("legendHit");
+  impact.className="legendImpact "+(ok?"showEnemy":"showHero");
+  if(typeof burst==="function"){
+   const r=target.getBoundingClientRect();
+   burst(r.left+r.width/2,r.top+r.height/2,ok?22:12);
+  }
+  if(typeof uiSound==="function")uiSound(ok?"good":"bad");
+ },230);
+ setTimeout(()=>{
+  attacker.classList.remove("legendAttackHero","legendAttackEnemy");
+  target.classList.remove("legendHit");
+  impact.className="legendImpact";
+ },700);
+}
+function legendaryQuestionKind(r){
+ // Questions au hasard dans n’importe quelle catégorie correspondant à la région.
+ return pick(units[r].map(u=>u[2]));
+}
+
+function renderLegendaryQuestion(){
+ const b=legendaryBattle;if(!b)return;
+ if(b.q>=b.total){finishLegendaryChallenge();return}
+ const kind=legendaryQuestionKind(b.region);
+ const level=rand(2,8);
+ const q=makeUniqueQuestion(kind,level,b.used);
+ b.current=q;
+ $("legendaryScore").textContent=`${b.score} / ${b.q}`;
+ $("legendaryProgress").textContent=`Question ${b.q+1} sur ${b.total}`;
+ $("legendaryQuestion").innerHTML=`<b>${q.q}</b>`;
+ $("legendaryChoices").innerHTML=q.choices.map((c,i)=>`<button type="button" data-choice="${i}" onclick="answerLegendary(this,${i})">${c}</button>`).join("");
+ $("legendaryFeedback").classList.add("hidden");
+}
+
+function answerLegendary(btn,index){
+ const b=legendaryBattle;if(!b)return;
+ [...$("legendaryChoices").children].forEach(x=>x.disabled=true);
+ const answer=b.current.choices[index];
+ const ok=String(answer)===String(b.current.a);
+ const need=Math.ceil(b.total*.75);
+ if(ok){
+   b.score++;
+   b.enemyHp=Math.max(4,b.enemyHp-(100/need));
+ }else{
+   const maxErrors=Math.max(2,b.total-need+2);
+   b.heroHp=Math.max(4,b.heroHp-(100/maxErrors));
+ }
+ b.q++;
+ $("legendaryScore").textContent=`${b.score} / ${b.q}`;
+ updateLegendaryHp();
+ animateLegendaryTurn(ok);
+ const f=$("legendaryFeedback");f.classList.remove("hidden");
+ f.innerHTML=ok?`✅ Attaque réussie ! <small>${b.current.ex||""}</small>`:`❌ Le légendaire contre-attaque ! La bonne réponse était <b>${b.current.a}</b>. <small>${b.current.ex||""}</small>`;
+ setTimeout(renderLegendaryQuestion,1250);
+}
+
+function finishLegendaryChallenge(){
+ const b=legendaryBattle;
+ // 75 % requis, arrondi au supérieur.
+ const need=Math.ceil(b.total*.75);
+ const won=b.score>=need;
+ if(won){
+   const key=b.encounter.shiny?"rayquaza-shiny":b.encounter.name;
+   const display=b.encounter.shiny?"Rayquaza chromatique":(b.mon.fr||legendaryFrench[b.encounter.name]||b.encounter.name);
+   if(b.encounter.shiny){
+     if(!state.pokedex[key])state.pokedex[key]={name:"Rayquaza chromatique",img:$("legendaryPokemonImg").src,count:0,where:"Défi des Légendaires – Hoenn",legendary:true,shiny:true};
+     state.pokedex[key].count=(state.pokedex[key].count||0)+1;
+     state.captures=(state.captures||0)+1;
+   }else{
+     capturePokemon(b.encounter.name,`Défi des Légendaires – ${regionName(b.region)}`);
+     state.pokedex[b.encounter.name].legendary=true;
+   }
+   state.xp+=150;state.stars+=b.score;save();
+   b.enemyHp=0;updateLegendaryHp();
+   $("legendaryPokemonImg").classList.add("legendCaptureFlash");
+   setTimeout(()=>$("legendaryPokemonImg").classList.remove("legendCaptureFlash"),1300);
+   if(typeof burst==="function"){const r=$("legendaryPokemonImg").getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,45)}
+   $("legendaryQuestion").innerHTML=`<h2>🏆 Défi réussi !</h2><p>Tu as obtenu <b>${b.score}/${b.total}</b>. ${b.encounter.shiny?"✨ Une présence incroyablement rare apparaît…":"Le Pokémon légendaire accepte ton défi."}</p><h2>${display} est capturé !</h2>`;
+   $("legendaryChoices").innerHTML=`<button class="btn yellow" onclick="openLegendaryHub()">Retour au sanctuaire</button><button class="btn green" onclick="startLegendaryChallenge('${b.region}')">Nouveau défi</button>`;
+   $("legendaryFeedback").classList.add("hidden");
+ }else{
+   b.heroHp=0;updateLegendaryHp();
+   $("legendHeroF").classList.add("legendHit");setTimeout(()=>$("legendHeroF").classList.remove("legendHit"),800);
+   $("legendaryQuestion").innerHTML=`<h2>Le légendaire s’échappe…</h2><p>Score : <b>${b.score}/${b.total}</b>. Il fallait ${need} bonnes réponses. Tu peux retenter le défi avec une nouvelle série de questions.</p>`;
+   $("legendaryChoices").innerHTML=`<button class="btn yellow" onclick="startLegendaryChallenge('${b.region}')">Réessayer</button><button class="btn ghost" onclick="openLegendaryHub()">Retour</button>`;
+   $("legendaryFeedback").classList.add("hidden");
+ }
+}
+
 function resetAll(){if(confirm("Effacer toute la progression ?")){localStorage.removeItem("pokeClassV2");location.reload()}}
 function questionKey(x){return x.q+"|||"+x.a}
 const QUESTION_HISTORY_KEY="pokeClassQuestionHistoryV3";

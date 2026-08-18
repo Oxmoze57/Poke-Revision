@@ -1,77 +1,37 @@
-# PokéClasse 1.4.0 — Hoenn CE2
+# PokéClasse — Version finale 1.5.2
 
-Cette version ajoute une troisième région complète dédiée au programme de CE2.
+Cette version regroupe l’ensemble des fonctionnalités validées :
 
-## Hoenn CE2 — 8 arènes
+- Kanto : révisions de français CE1 ;
+- Johto : révisions de mathématiques CE1 ;
+- Hoenn : programme CE2 avec 8 arènes ;
+- École des Dresseurs, leçons et entraînements ;
+- lecture automatique sauf pour la leçon et l’arène 1 de Hoenn ;
+- arènes rejouables avec forte variété de questions ;
+- système anti-répétition des questions ;
+- Pokédex Kanto /151, Johto /100 et Hoenn /135 ;
+- noms des Pokémon en français ;
+- cartes interactives avec accès direct aux arènes ;
+- Ligues finales ;
+- Défi des Légendaires après chaque Ligue ;
+- 10 à 20 questions aléatoires par Défi des Légendaires ;
+- combats légendaires animés avec attaques, impacts et barres de PV ;
+- capture de Pokémon légendaires ;
+- Rayquaza chromatique noir comme rencontre ultra-rare à Hoenn ;
+- sauvegarde locale compatible avec les versions précédentes.
 
-1. **Mérouville — Badge Lecture**  
-   Lecture, compréhension, informations explicites et inférences simples.  
-   Arène : 7 questions.
+## Publication sur GitHub Pages
 
-2. **Myokara — Badge Nombre**  
-   Nombres jusqu’à 10 000, décomposition, comparaison et rangement.  
-   Arène : 7 questions.
+Copiez tout le contenu de cette archive à la racine de votre dépôt GitHub.
 
-3. **Lavandia — Badge Grammaire**  
-   Phrase, sujet, verbe, nom, déterminant et adjectif.  
-   Arène : 8 questions.
+Puis, dans GitHub Desktop :
 
-4. **Vermilava — Badge Calcul**  
-   Calcul mental, addition, soustraction, multiplication et premières divisions.  
-   Arène : 10 questions.
+1. ouvrez le dépôt ;
+2. remplacez les anciens fichiers par ceux de cette version ;
+3. saisissez comme résumé de commit : `Version finale 1.5.2`;
+4. cliquez sur **Commit to main** ;
+5. cliquez sur **Push origin** ;
+6. attendez le déploiement GitHub Pages ;
+7. rechargez le site avec `Ctrl + F5`.
 
-5. **Clémenti-Ville — Badge Orthographe**  
-   Accords, pluriel, présent, futur et imparfait.  
-   Arène : 8 questions.
-
-6. **Cimetronelle — Badge Problème**  
-   Problèmes à une ou deux étapes, informations utiles et choix d’opération.  
-   Arène : 6 questions.
-
-7. **Algatia — Badge Écrivain**  
-   Lexique, familles de mots, synonymes, antonymes, connecteurs et cohérence.  
-   Arène : 8 questions.
-
-8. **Atalanopolis — Badge Maîtrise**  
-   Mesures, durées, monnaie, géométrie, fractions simples et données.  
-   Arène : 10 questions.
-
-Chaque arène nécessite d’abord de réussir l’entraînement de son unité à l’École des Dresseurs avec au moins 4/5.
-
-## Ligue CE2 de Hoenn
-
-Après les 8 badges, une Ligue finale de 20 questions mélange tout le programme CE2.  
-Il faut obtenir au moins 15/20 pour la remporter.
-
-## Pokédex
-
-- Kanto : 151 Pokémon
-- Johto : 100 Pokémon
-- **Hoenn : 135 Pokémon (n°252 à 386)**
-
-Les Pokémon encore absents du Pokédex sont privilégiés dans les rencontres d’arène.
-
-## Sauvegarde
-
-La version utilise toujours la même sauvegarde `pokeClassV2`, ce qui conserve les progrès Kanto et Johto déjà présents dans le navigateur.
-
-## GitHub Pages
-
-Copiez tous les fichiers de l’archive à la racine du dépôt et conservez le dossier `assets`.
-
-Dans GitHub Desktop :
-1. remplacez les anciens fichiers ;
-2. commit : `Ajout Hoenn CE2`;
-3. **Commit to main** ;
-4. **Push origin** ;
-5. rechargez GitHub Pages avec `Ctrl + F5`.
-
-## Version 1.4.1 — Lecture autonome et variété renforcée
-
-- Dans l'Arène 1 de Hoenn (Lecture & compréhension), la lecture automatique des questions est désactivée uniquement pendant le combat.
-- La lecture automatique reste disponible partout ailleurs, y compris les autres arènes, les entraînements et les Ligues.
-- Le jeu mémorise désormais jusqu'à 240 questions récentes par région et type d'exercice afin d'éviter de les reproposer lors des parties suivantes.
-- Le générateur tente jusqu'à 300 variantes avant d'autoriser le retour d'une question ancienne.
-- La banque de compréhension a été fortement agrandie.
-- Les banques de grammaire, orthographe/conjugaison et lexique/production d'écrit ont été enrichies.
-- Les exercices numériques restent générés dynamiquement avec de nombreuses combinaisons.
+Le Défi des Légendaires d’une région reste verrouillé tant que sa Ligue n’a pas été remportée.
