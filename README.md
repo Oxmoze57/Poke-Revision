@@ -1,106 +1,77 @@
-# PokéClasse — Cartes esthétiques
+# PokéClasse 1.4.0 — Hoenn CE2
 
-Version basée sur la maquette visuelle validée.
+Cette version ajoute une troisième région complète dédiée au programme de CE2.
 
-## Changements
+## Hoenn CE2 — 8 arènes
 
-- écran Régions transformé en deux grandes cartes illustrées ;
-- cartes Kanto et Johto découpées depuis la maquette esthétique ;
-- progression et prochaine étape affichées sur chaque région ;
-- cartes interactives conservées ;
-- zones des badges cliquables sans ajouter de symboles par-dessus l’illustration ;
-- toutes les fonctions précédentes restent présentes : leçons, arènes, lecture vocale, animations, combats, Pokédex et sauvegarde.
+1. **Mérouville — Badge Lecture**  
+   Lecture, compréhension, informations explicites et inférences simples.  
+   Arène : 7 questions.
 
-## Publication GitHub Pages
+2. **Myokara — Badge Nombre**  
+   Nombres jusqu’à 10 000, décomposition, comparaison et rangement.  
+   Arène : 7 questions.
 
-Copiez tous les fichiers de l’archive à la racine du dépôt en conservant le dossier `assets`.
+3. **Lavandia — Badge Grammaire**  
+   Phrase, sujet, verbe, nom, déterminant et adjectif.  
+   Arène : 8 questions.
 
-Puis faites un commit et un push depuis GitHub Desktop.
+4. **Vermilava — Badge Calcul**  
+   Calcul mental, addition, soustraction, multiplication et premières divisions.  
+   Arène : 10 questions.
 
-## Correction 1.1.1
+5. **Clémenti-Ville — Badge Orthographe**  
+   Accords, pluriel, présent, futur et imparfait.  
+   Arène : 8 questions.
 
-- les huit badges de chaque carte sont maintenant clairement visibles ;
-- chaque badge est un véritable bouton cliquable ;
-- les arènes verrouillées restent cliquables et expliquent comment les débloquer ;
-- un cadenas distingue les arènes nécessitant encore l’entraînement de l’École ;
-- les zones de clic ont été agrandies pour les écrans tactiles.
+6. **Cimetronelle — Badge Problème**  
+   Problèmes à une ou deux étapes, informations utiles et choix d’opération.  
+   Arène : 6 questions.
 
-## Interface de carte premium 1.2.0
+7. **Algatia — Badge Écrivain**  
+   Lexique, familles de mots, synonymes, antonymes, connecteurs et cohérence.  
+   Arène : 8 questions.
 
-- carte principale plus grande et plus lisible ;
-- marqueurs compacts intégrés à l’illustration ;
-- panneau latéral détaillé pour l’arène sélectionnée ;
-- bouton unique pour entrer dans l’arène ;
-- états visuels accessibles, terminés et verrouillés ;
-- barre de progression régionale ;
-- école et Ligue intégrées comme destinations spéciales ;
-- adaptation automatique aux écrans mobiles.
+8. **Atalanopolis — Badge Maîtrise**  
+   Mesures, durées, monnaie, géométrie, fractions simples et données.  
+   Arène : 10 questions.
 
-## Version 1.2.1 — Fonds Kanto et Johto
+Chaque arène nécessite d’abord de réussir l’entraînement de son unité à l’École des Dresseurs avec au moins 4/5.
 
-- intégration des cartes esthétiques de Kanto et Johto comme arrière-plans ;
-- conservation des badges et marqueurs cliquables au-dessus des images ;
-- les images utilisent `pointer-events: none` et ne bloquent donc jamais les clics ;
-- ajout d’un voile léger pour améliorer la lisibilité des marqueurs ;
-- compatibilité mobile conservée.
+## Ligue CE2 de Hoenn
 
-## Version 1.2.2 — Correction définitive des fonds
+Après les 8 badges, une Ligue finale de 20 questions mélange tout le programme CE2.  
+Il faut obtenir au moins 15/20 pour la remporter.
 
-Les deux cartes sont maintenant intégrées directement dans `index.html` sous forme de données d’image. Elles ne dépendent plus d’un chemin de fichier externe.
+## Pokédex
 
-Cette correction évite :
-- les erreurs de chemin sur GitHub Pages ;
-- les images absentes lors de l’aperçu du fichier HTML ;
-- les problèmes liés au nom du dépôt ou à un sous-dossier ;
-- certains problèmes de cache.
+- Kanto : 151 Pokémon
+- Johto : 100 Pokémon
+- **Hoenn : 135 Pokémon (n°252 à 386)**
 
-Les badges restent placés dans un calque supérieur et conservent leurs clics.
+Les Pokémon encore absents du Pokédex sont privilégiés dans les rencontres d’arène.
 
-## Version 1.2.3 — Alignement précis
+## Sauvegarde
 
-Les centres des huit symboles de chaque carte ont été mesurés directement sur les images Kanto et Johto.
+La version utilise toujours la même sauvegarde `pokeClassV2`, ce qui conserve les progrès Kanto et Johto déjà présents dans le navigateur.
 
-Les marqueurs utilisent maintenant :
-- des coordonnées propres à chaque région ;
-- un positionnement par le centre grâce à `translate(-50%, -50%)` ;
-- un léger déplacement uniquement au survol ou à la sélection ;
-- les mêmes coordonnées proportionnelles sur ordinateur et mobile.
+## GitHub Pages
 
+Copiez tous les fichiers de l’archive à la racine du dépôt et conservez le dossier `assets`.
 
-## Version 2.0 — Interface aventure
-Nouvelle navigation, parcours lumineux, noms des villes, progression intégrée et panneau d’arène façon jeu vidéo.
+Dans GitHub Desktop :
+1. remplacez les anciens fichiers ;
+2. commit : `Ajout Hoenn CE2`;
+3. **Commit to main** ;
+4. **Push origin** ;
+5. rechargez GitHub Pages avec `Ctrl + F5`.
 
-## Version 1.2.5 — Correction structurelle de l’alignement
+## Version 1.4.1 — Lecture autonome et variété renforcée
 
-La correction ne repose plus sur une compensation approximative de `object-fit: cover`.
-
-- les panneaux décoratifs inférieurs ont été retirés des deux images ;
-- les fonds Kanto et Johto utilisent désormais exactement le même ratio que le calque interactif ;
-- chaque bouton est positionné au centre mesuré du symbole correspondant ;
-- le chemin lumineux utilise les mêmes coordonnées que les boutons ;
-- le bouton École est nettement plus compact, en particulier sur Johto.
-
-## Version 1.2.7 — Noms français des Pokémon
-
-- `Caterpie` est maintenant affiché sous le nom **Chenipan** ;
-- `Oddish` devient **Mystherbe** ;
-- tous les Pokémon actuellement utilisés dans les arènes disposent d’un nom français ;
-- pour tout futur Pokémon ajouté au jeu, PokéClasse tente automatiquement de récupérer son nom français via PokéAPI ;
-- les identifiants anglais restent utilisés uniquement en interne afin de charger les images.
-
-## Version 1.3.0 — Correctifs après utilisation
-
-### Arènes
-- ajout d’un accès direct aux 8 arènes dans le panneau de droite ;
-- cet accès ne dépend pas de la position des marqueurs sur la carte ;
-- les arènes verrouillées sont toujours sélectionnables et renvoient vers l’École ;
-- les arènes terminées restent rejouables.
-
-### Pokédex
-- les 151 Pokémon de Kanto peuvent apparaître dans les arènes de Kanto ;
-- les 100 Pokémon de Johto peuvent apparaître dans les arènes de Johto ;
-- les espèces sont réparties entre les 8 arènes de chaque région ;
-- tant qu’une arène possède des espèces non capturées, une espèce nouvelle est choisie en priorité ;
-- après avoir complété une arène, les rencontres deviennent aléatoires ;
-- les Ligues privilégient elles aussi une espèce encore manquante ;
-- le Pokédex affiche maintenant la progression Kanto /151 et Johto /100.
+- Dans l'Arène 1 de Hoenn (Lecture & compréhension), la lecture automatique des questions est désactivée uniquement pendant le combat.
+- La lecture automatique reste disponible partout ailleurs, y compris les autres arènes, les entraînements et les Ligues.
+- Le jeu mémorise désormais jusqu'à 240 questions récentes par région et type d'exercice afin d'éviter de les reproposer lors des parties suivantes.
+- Le générateur tente jusqu'à 300 variantes avant d'autoriser le retour d'une question ancienne.
+- La banque de compréhension a été fortement agrandie.
+- Les banques de grammaire, orthographe/conjugaison et lexique/production d'écrit ont été enrichies.
+- Les exercices numériques restent générés dynamiquement avec de nombreuses combinaisons.
