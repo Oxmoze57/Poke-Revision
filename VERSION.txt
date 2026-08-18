@@ -1,1 +1,1 @@
-PokéClasse 1.2.7 — Noms des Pokémon en français
+PokéClasse 1.3.0 — Accès direct aux 16 arènes et Pokédex Kanto/Johto complet

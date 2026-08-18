@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.2.7-noms-pokemon-francais">
+  <meta name="pokeclasse-version" content="1.3.0-arenes-accessibles-pokedex-complet">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -769,6 +769,52 @@ main{max-width:1180px}
   .adventureMap .mapSpecial.school b{font-size:.5rem!important}
 }
 
+
+/* ===== Correctif accessibilité des arènes + Pokédex complet ===== */
+.arenaQuickAccess{
+  margin:12px 0 16px;
+  padding:11px;
+  border-radius:14px;
+  background:#ffffff0c;
+  border:1px solid #ffffff1f;
+}
+.arenaQuickTitle{display:flex;justify-content:space-between;gap:10px;align-items:flex-end;margin-bottom:9px}
+.arenaQuickTitle span{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:950;color:#aee3ff}
+.arenaQuickTitle small{font-size:.62rem;opacity:.68;text-align:right;max-width:175px}
+.arenaQuickNav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.arenaQuickButton{
+  position:relative;
+  min-width:0;
+  padding:8px 4px!important;
+  border-radius:10px!important;
+  background:#173f5f!important;
+  color:#fff!important;
+  border:1px solid #ffffff28!important;
+  box-shadow:none!important;
+  font-size:.73rem!important;
+}
+.arenaQuickButton:hover{transform:translateY(-2px)!important;background:#1f6596!important}
+.arenaQuickButton.current{outline:3px solid #facc15!important;background:#0f6da6!important}
+.arenaQuickButton.completed{background:#17734e!important}
+.arenaQuickButton.locked{background:#465566!important;color:#dce5eb!important}
+.arenaQuickButton.locked::after{
+  content:"🔒";
+  position:absolute;right:2px;top:-7px;font-size:.62rem;
+}
+.arenaQuickButton .miniBadge{display:block;font-size:1rem;line-height:1;margin-bottom:3px}
+.dexRegionProgress{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.dexRegionProgress>div{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 13px;border-radius:13px;background:#eef8ff;border:2px solid #cce7f5;
+}
+.dexRegionProgress span{font-weight:900}.dexRegionProgress b{color:#12699a}
+@media(max-width:620px){
+  .arenaQuickNav{grid-template-columns:repeat(8,1fr);gap:4px}
+  .arenaQuickButton{font-size:0!important;padding:7px 2px!important}
+  .arenaQuickButton .miniBadge{font-size:.9rem;margin:0}
+  .arenaQuickTitle small{display:none}
+}
+
 </style>
 </head>
 <body><div id="fxLayer" class="fx-layer"></div><button id="soundToggle" class="sound-toggle" title="Activer ou couper les sons">🔊</button>
@@ -915,6 +961,10 @@ main{max-width:1180px}
 
     <aside class="arenaInspector adventureInspector">
       <div class="inspectorHeader"><span class="homeKicker">ARÈNE <b id="inspectorArenaNumber">1</b></span><span id="inspectorStep" class="inspectorStep">01 / 08</span></div>
+      <div class="arenaQuickAccess">
+        <div class="arenaQuickTitle"><span>Accès direct</span><small>Les 8 arènes restent accessibles même si un marqueur est difficile à toucher sur la carte.</small></div>
+        <div id="arenaQuickNav" class="arenaQuickNav"></div>
+      </div>
       <div class="inspectorHero">
         <div id="inspectorBadge" class="inspectorBadge">◆</div>
         <div><h2 id="inspectorCity">Argenta</h2><p id="inspectorBadgeName" class="inspectorBadgeName">Badge Roche</p></div>
@@ -924,6 +974,7 @@ main{max-width:1180px}
         <div><small>📖 Matière</small><strong id="inspectorSubject">Français</strong></div>
         <div><small>📜 Leçon associée</small><strong id="inspectorLesson">Vocabulaire</strong></div>
         <div><small>⚙ Difficulté</small><strong id="inspectorDifficulty">Débutant</strong></div>
+        <div><small>📕 Pokémon de cette arène</small><strong id="inspectorPokemonProgress">À charger…</strong></div>
       </div>
       <div id="inspectorStatus" class="inspectorStatus locked"><span id="inspectorStatusIcon">🔒</span><div><b id="inspectorStatusTitle">Arène verrouillée</b><small id="inspectorStatusText">Réussis l’entraînement correspondant.</small></div></div>
       <button id="inspectorAction" class="btn blue inspectorAction" onclick="enterSelectedArena()">Voir comment débloquer</button>
@@ -966,7 +1017,11 @@ main{max-width:1180px}
 
 <section id="pokedexScreen" class="card hidden">
 <div class="row"><button class="btn ghost" onclick="openScreen('map')">← Carte</button><h2>Pokédex</h2><span class="pill">Captures : <b id="captureCount">0</b></span></div>
-<p>Les Pokémon sont ajoutés au Pokédex uniquement après une victoire en arène ou en Ligue. Rejoue les arènes pour rencontrer d'autres espèces.</p>
+<div class="dexRegionProgress">
+  <div><span>Kanto</span><b id="dexKantoProgress">0 / 151</b></div>
+  <div><span>Johto</span><b id="dexJohtoProgress">0 / 100</b></div>
+</div>
+<p>Chaque Pokémon de Kanto et Johto peut maintenant apparaître dans une arène. Tant qu’il reste une espèce non capturée dans l’arène, le jeu la privilégie automatiquement.</p>
 <div id="pokedexGrid" class="badgeGrid"></div>
 </section>
 
@@ -1157,6 +1212,17 @@ function renderRoute(){
  const d=pts.map((p,i)=>(i?"L":"M")+p[0]+" "+p[1]).join(" ");
  $("routeLayer").innerHTML=`<path class="routeShadow" d="${d}"/><path class="routePath" d="${d}"/>`;
 }
+function renderArenaQuickNav(){
+ const data=regionMapData[region];
+ const box=$("arenaQuickNav");
+ if(!box)return;
+ box.innerHTML=units[region].map((u,i)=>{
+   const won=!!state.arenas[region+"-"+i],unlocked=arenaUnlocked(i),badge=data.badges[i];
+   const status=won?"completed":unlocked?"available":"locked";
+   return `<button type="button" class="arenaQuickButton ${status} ${i===selectedArenaIndex?"current":""}" title="${data.cities[i]} — ${u[0]}" onclick="selectArena(${i})"><span class="miniBadge">${won?"✓":badge[1]}</span>${i+1}</button>`;
+ }).join("");
+}
+
 function renderMap(){
  const data=regionMapData[region];
  data.image=region==="fr"?KANTO_BACKGROUND:JOHTO_BACKGROUND;
@@ -1173,6 +1239,7 @@ function renderMap(){
   const badge=data.badges[i],won=!!state.arenas[region+"-"+i],unlocked=arenaUnlocked(i),status=won?"completed":unlocked?"available":"locked";
   return `<button type="button" class="node ${pos[i]} ${badge[0]} ${status} ${i===selectedArenaIndex?"selected":""}" aria-label="Sélectionner l’arène de ${data.cities[i]}" onclick="selectArena(${i})"><span class="badgeGlyph">${won?"✓":badge[1]}</span><span class="nodeLabel">${data.cities[i]}</span></button>`;
  }).join("");
+ renderArenaQuickNav();
  renderRoute();
  const wonCount=completedInRegion(region);
  $("mapProgressText").textContent=`${wonCount} / 8 badges`;
@@ -1189,6 +1256,7 @@ function selectArena(i,rerender=true){
  const won=!!state.arenas[region+"-"+i],unlocked=arenaUnlocked(i);
  document.querySelectorAll("#arenaNodes .node").forEach((el,n)=>el.classList.toggle("selected",n===i));
  document.querySelectorAll("#dockBadges .dockBadge").forEach((el,n)=>el.classList.toggle("current",n===i));
+ document.querySelectorAll("#arenaQuickNav .arenaQuickButton").forEach((el,n)=>el.classList.toggle("current",n===i));
  $("inspectorArenaNumber").textContent=i+1;
  $("inspectorStep").textContent=String(i+1).padStart(2,"0")+" / 08";
  $("inspectorBadge").textContent=won?"✓":badge[1];
@@ -1200,6 +1268,7 @@ function selectArena(i,rerender=true){
  $("inspectorSubject").textContent=region==="fr"?"Français":"Mathématiques";
  $("inspectorLesson").textContent=u[0];
  $("inspectorDifficulty").textContent=["Débutant","Débutant +","Intermédiaire","Intermédiaire +","Confirmé","Confirmé +","Expert","Maître"][i];
+ updateArenaPokemonProgress(i);
  const status=$("inspectorStatus");status.className="inspectorStatus "+(won?"completed":unlocked?"available":"locked");
  $("inspectorStatusIcon").textContent=won?"✅":unlocked?"✅":"🔒";
  $("inspectorStatusTitle").textContent=won?"Arène terminée":unlocked?"Arène accessible":"Arène verrouillée";
@@ -1255,37 +1324,86 @@ function startTraining(){train={q:0,score:0,current:null,selected:null,used:[]};
 function renderTraining(){train.current=makeUniqueQuestion(units[region][currentUnit][2],0,train.used);train.selected=null;$("trainNum").textContent=train.q+1;$("trainScore").textContent=train.score;$("trainProgress").style.width=(train.q/5*100)+"%";$("trainQuestion").textContent=train.current.q;$("trainChoices").innerHTML=train.current.choices.map(c=>`<button class="choice" onclick="selectTrain(this,'${String(c).replaceAll("'","\\'")}')">${c}</button>`).join("");$("trainFeedback").innerHTML="";$("trainValidate").classList.remove("hidden");$("trainNext").classList.add("hidden");syncAutoReadControls();if(autoReadQuestions)setTimeout(speakTraining,320)}
 function selectTrain(el,v){train.selected=v;document.querySelectorAll("#trainChoices .choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
 function validateTraining(){if(train.selected===null){alert("Choisis une réponse.");return}let ok=String(train.selected)===String(train.current.a);if(ok)train.score++;$("trainScore").textContent=train.score;$("trainFeedback").className="feedback "+(ok?"ok":"ko");$("trainFeedback").innerHTML=(ok?"✅ Bonne réponse ! ":"❌ Bonne réponse : <b>"+train.current.a+"</b>. ")+train.current.ex+(train.current.steps?`<div class="correction">${train.current.steps}</div>`:"");$("trainValidate").classList.add("hidden");$("trainNext").classList.remove("hidden")}
-function nextTraining(){train.q++;if(train.q<5)return renderTraining();let passed=train.score>=4;if(passed){state.school[region+"-"+currentUnit]=true;state.xp+=30;state.stars+=train.score;save();alert("Entraînement réussi ! L’arène correspondante est débloquée.")}else alert("Il faut au moins 4/5. Relis la leçon puis recommence.");openSchool()}
+function nextTraining(){train.q++;if(train.q<5)return renderTraining();let passed=train.score>=4;if(passed){state.school[region+"-"+currentUnit]=true;state.xp+=30;state.stars+=train.score;save();renderArenaQuickNav();alert("Entraînement réussi ! L’arène correspondante est débloquée.")}else alert("Il faut au moins 4/5. Relis la leçon puis recommence.");openSchool()}
 function openArena(i){if(!arenaUnlocked(i)){alert("Cette arène est encore verrouillée. Ouvre l’École des Dresseurs, choisis l’unité correspondante et réussis son entraînement pour la débloquer.");return}currentUnit=i;$("arenaTitle").textContent=`Arène ${i+1} – ${units[region][i][0]}`;$("arenaIntro").innerHTML=`<h2>${units[region][i][1]}</h2><p>Difficulté : ${["Débutant","Débutant +","Intermédiaire","Intermédiaire +","Confirmé","Confirmé +","Expert","Maître"][i]}.</p><p>Le combat contient ${5+i} questions. Cette arène est rejouable : les questions et le Pokémon adverse changent à chaque partie. Les nombres, les pièges et le nombre d’étapes augmentent progressivement.</p>`;openScreen("arenaScreen")}
 async function startArenaBattle(){await startBattle(false)}
 function openLeague(){if(!leagueUnlocked()){alert("Remporte les 8 arènes de cette région.");return}currentUnit=7;startBattle(true)}
-function arenaPokemonPool(r,i){
- const frPools=[
-  ["rattata","pidgey","caterpie","meowth"],
-  ["bulbasaur","oddish","caterpie","pidgey"],
-  ["geodude","onix","machop","rattata"],
-  ["pikachu","magnemite","meowth","psyduck"],
-  ["gastly","haunter","abra","kadabra"],
-  ["arcanine","charmander","machop","eevee"],
-  ["lapras","squirtle","psyduck","magnemite"],
-  ["dragonite","eevee","arcanine","lapras"]
- ];
- const mathPools=[
-  ["pidgey","rattata","caterpie","meowth"],
-  ["charmander","geodude","machop","onix"],
-  ["squirtle","psyduck","lapras","magnemite"],
-  ["pikachu","magnemite","abra","kadabra"],
-  ["oddish","bulbasaur","caterpie","pidgey"],
-  ["gastly","haunter","meowth","eevee"],
-  ["arcanine","machop","onix","lapras"],
-  ["dragonite","eevee","kadabra","arcanine"]
- ];
- return (r==="fr"?frPools:mathPools)[i]||pokemonPool;
+const regionalDexCache={fr:null,math:null};
+
+async function loadRegionalDex(r){
+  if(regionalDexCache[r])return regionalDexCache[r];
+  const url=r==="fr"
+    ? "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0"
+    : "https://pokeapi.co/api/v2/pokemon?limit=100&offset=151";
+  try{
+    const response=await fetch(url);
+    if(!response.ok)throw new Error("Pokédex régional indisponible");
+    const payload=await response.json();
+    regionalDexCache[r]=payload.results.map(p=>p.name);
+    return regionalDexCache[r];
+  }catch(error){
+    console.warn("Impossible de charger le Pokédex régional complet.",error);
+    // Secours hors ligne : les Pokémon historiques déjà présents dans le projet.
+    regionalDexCache[r]=r==="fr"
+      ? ["bulbasaur","charmander","squirtle","caterpie","pidgey","rattata","pikachu","oddish","meowth","psyduck","machop","geodude","magnemite","gastly","onix","abra","haunter","kadabra","arcanine","lapras","eevee","dragonite"]
+      : ["chikorita","cyndaquil","totodile","sentret","hoothoot","ledyba","spinarak","chinchou","togepi","natu","mareep","marill","sudowoodo","aipom","wooper","murkrow","misdreavus","girafarig","dunsparce","snubbull","sneasel","teddiursa","slugma","swinub","corsola","remoraid","delibird","skarmory","houndour","phanpy","stantler","smeargle","tyrogue","smoochum","elekid","magby","miltank","blissey","raikou","entei","suicune","larvitar","lugia","ho-oh","celebi"];
+    return regionalDexCache[r];
+  }
 }
+
+async function arenaPokemonPool(r,i){
+  const dex=await loadRegionalDex(r);
+  // Répartition stable : chaque espèce appartient à une des 8 arènes.
+  return dex.filter((name,index)=>index%8===i);
+}
+
+async function chooseArenaPokemon(r,i){
+  const pool=await arenaPokemonPool(r,i);
+  if(!pool.length)return r==="fr"?"pikachu":"chikorita";
+  // Tant qu’il reste une espèce à découvrir, aucune répétition n’est imposée.
+  const unseen=pool.filter(name=>!state.pokedex[name]);
+  return pick(unseen.length?unseen:pool);
+}
+
+async function chooseLeaguePokemon(r){
+  const dex=await loadRegionalDex(r);
+  const unseen=dex.filter(name=>!state.pokedex[name]);
+  if(unseen.length)return pick(unseen);
+  const rare=r==="fr"
+    ? ["articuno","zapdos","moltres","mewtwo","mew"]
+    : ["raikou","entei","suicune","lugia","ho-oh","celebi"];
+  return pick(rare);
+}
+
+function capturedCountForRegion(r){
+  const dex=regionalDexCache[r]||[];
+  if(!dex.length)return 0;
+  return dex.filter(name=>state.pokedex[name]).length;
+}
+
+async function updateArenaPokemonProgress(i){
+  const target=$("inspectorPokemonProgress");
+  if(!target)return;
+  target.textContent="Chargement…";
+  const pool=await arenaPokemonPool(region,i);
+  const caught=pool.filter(name=>state.pokedex[name]).length;
+  target.textContent=`${caught} / ${pool.length} capturés`;
+}
+
 async function startBattle(league){
- let enemyName=league?pick(["dragonite","lapras","arcanine","kadabra"]):pick(arenaPokemonPool(region,currentUnit));
+ let enemyName=league
+   ? await chooseLeaguePokemon(region)
+   : await chooseArenaPokemon(region,currentUnit);
  let enemy=await poke(enemyName),hero=await poke(state.partner);
- battle={arena:currentUnit,q:0,total:league?16:5+currentUnit,score:0,heroHp:100,enemyHp:100,current:null,selected:null,enemy:enemyName,league,used:[]};$("enemyImg").src=enemy.img;$("heroImg").src=hero.img;$("enemyName").textContent=enemy.fr;$("heroName").textContent=hero.fr;$("battleTitle").textContent=league?`Ligue finale – ${region==="fr"?"Français":"Mathématiques"}`:`Arène ${currentUnit+1} – ${units[region][currentUnit][0]}`;openScreen("battle");renderBattle()}
+ battle={arena:currentUnit,q:0,total:league?16:5+currentUnit,score:0,heroHp:100,enemyHp:100,current:null,selected:null,enemy:enemy.name||enemyName,league,used:[]};
+ $("enemyImg").src=enemy.img;
+ $("heroImg").src=hero.img;
+ $("enemyName").textContent=enemy.fr;
+ $("heroName").textContent=hero.fr;
+ $("battleTitle").textContent=league?`Ligue finale – ${region==="fr"?"Français":"Mathématiques"}`:`Arène ${currentUnit+1} – ${units[region][currentUnit][0]}`;
+ openScreen("battle");
+ renderBattle();
+}
 function renderBattle(){battle.current=makeUniqueQuestion(battle.league?"mix":units[region][battle.arena][2],battle.arena,battle.used);battle.selected=null;$("battleNum").textContent=battle.q+1;$("battleTotal").textContent=battle.total;$("battleQuestion").textContent=battle.current.q;$("battleChoices").innerHTML=battle.current.choices.map(c=>`<button class="choice" onclick="selectBattle(this,'${String(c).replaceAll("'","\\'")}')">${c}</button>`).join("");$("battleFeedback").innerHTML="";$("battleValidate").classList.remove("hidden");$("battleNext").classList.add("hidden");updateHp();syncAutoReadControls();if(autoReadQuestions)setTimeout(speakBattle,360)}
 function selectBattle(el,v){battle.selected=v;document.querySelectorAll("#battleChoices .choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
 function validateBattle(){if(battle.selected===null){alert("Choisis une réponse.");return}let ok=String(battle.selected)===String(battle.current.a);if(ok){battle.score++;battle.enemyHp=Math.max(0,battle.enemyHp-(100/battle.total+4));$("heroF").classList.add("attack");$("enemyF").classList.add("hit")}else{battle.heroHp=Math.max(0,battle.heroHp-(100/battle.total+5));$("enemyF").classList.add("attack");$("heroF").classList.add("hit")}setTimeout(()=>document.querySelectorAll(".fighter").forEach(x=>x.classList.remove("attack","hit")),500);$("battleFeedback").className="feedback "+(ok?"ok":"ko");$("battleFeedback").innerHTML=(ok?"✅ Attaque réussie ! ":"❌ Bonne réponse : <b>"+battle.current.a+"</b>. ")+battle.current.ex+(battle.current.steps?`<div class="correction">${battle.current.steps}</div>`:"");$("battleValidate").classList.add("hidden");$("battleNext").classList.remove("hidden");updateHp()}
@@ -1304,8 +1422,11 @@ function capturePokemon(name,source){
 function finishBattle(){let need=battle.league?12:Math.ceil(battle.total*.7),win=battle.score>=need;if(win){if(battle.league){state.leagues[region]=true;let id="league-"+region;if(!state.badges.includes(id))state.badges.push(id);state.xp+=200;state.stars+=battle.score;let fresh=capturePokemon(battle.enemy,`Ligue ${region==="fr"?"Kanto":"Johto"}`);save();$("endingText").textContent=`Tu as remporté la Ligue finale de ${region==="fr"?"français à Kanto":"mathématiques à Johto"} avec ${battle.score}/${battle.total}. ${fresh?"Nouveau Pokémon ajouté au Pokédex !":"Ce Pokémon a de nouveau été enregistré dans ton Pokédex."}`;openScreen("ending");return}state.arenas[region+"-"+battle.arena]=true;let id=region+"-"+battle.arena;if(!state.badges.includes(id))state.badges.push(id);state.xp+=50+(battle.arena*10);state.stars+=battle.score;let fresh=capturePokemon(battle.enemy,`${region==="fr"?"Kanto":"Johto"} – Arène ${battle.arena+1}`);save();alert(fresh?"Arène remportée ! Badge obtenu et nouveau Pokémon ajouté au Pokédex.":"Arène remportée ! Ce Pokémon avait déjà été capturé : son compteur augmente.")}else alert(`Combat perdu : ${battle.score}/${battle.total}. Il fallait au moins ${need} bonnes réponses.`);openScreen("map")}
 function speakBattle(){if(battle?.current)speakQuestion(battle.current.q,battle.current.choices,"battleQuestion")}
 async function renderPokedex(){
+ await Promise.all([loadRegionalDex("fr"),loadRegionalDex("math")]);
  const entries=Object.entries(state.pokedex);
  $("captureCount").textContent=state.captures;
+ if($("dexKantoProgress"))$("dexKantoProgress").textContent=`${capturedCountForRegion("fr")} / 151`;
+ if($("dexJohtoProgress"))$("dexJohtoProgress").textContent=`${capturedCountForRegion("math")} / 100`;
  if(!entries.length){
    $("pokedexGrid").innerHTML='<div class="lessonBox">Aucun Pokémon capturé pour le moment. Termine une arène pour commencer ton Pokédex.</div>';
    return;

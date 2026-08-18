@@ -87,3 +87,20 @@ La correction ne repose plus sur une compensation approximative de `object-fit: 
 - tous les Pokémon actuellement utilisés dans les arènes disposent d’un nom français ;
 - pour tout futur Pokémon ajouté au jeu, PokéClasse tente automatiquement de récupérer son nom français via PokéAPI ;
 - les identifiants anglais restent utilisés uniquement en interne afin de charger les images.
+
+## Version 1.3.0 — Correctifs après utilisation
+
+### Arènes
+- ajout d’un accès direct aux 8 arènes dans le panneau de droite ;
+- cet accès ne dépend pas de la position des marqueurs sur la carte ;
+- les arènes verrouillées sont toujours sélectionnables et renvoient vers l’École ;
+- les arènes terminées restent rejouables.
+
+### Pokédex
+- les 151 Pokémon de Kanto peuvent apparaître dans les arènes de Kanto ;
+- les 100 Pokémon de Johto peuvent apparaître dans les arènes de Johto ;
+- les espèces sont réparties entre les 8 arènes de chaque région ;
+- tant qu’une arène possède des espèces non capturées, une espèce nouvelle est choisie en priorité ;
+- après avoir complété une arène, les rencontres deviennent aléatoires ;
+- les Ligues privilégient elles aussi une espèce encore manquante ;
+- le Pokédex affiche maintenant la progression Kanto /151 et Johto /100.
