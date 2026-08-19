@@ -1,1 +1,1 @@
-PokéClasse 1.6.0 — Cartes décoratives et accès rapide sous la carte
+PokéClasse 1.6.1 — Accès rapide Johto vérifié et clics fiabilisés

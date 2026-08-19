@@ -155,3 +155,24 @@ Les cartes de Kanto, Johto et Hoenn ne servent plus de boutons.
 - la Ligue Pokémon possède un grand bouton unique sous les arènes ;
 - la même logique est utilisée pour Kanto, Johto et Hoenn ;
 - cela élimine les conflits liés aux zones de clic superposées sur les cartes.
+
+## Version 1.6.1 — Accès rapide Johto vérifié
+
+Tous les clics de l'accès rapide sont maintenant gérés par des événements JavaScript dédiés, sans `onclick` inline.
+
+Pour Johto, le panneau contient :
+- 1 bouton École des Dresseurs ;
+- 8 boutons d'arènes ;
+- 1 bouton Ligue Pokémon.
+
+La carte est strictement décorative : ses marqueurs d'arène, l'École et la Ligue ont `pointer-events: none`.
+
+Le bouton Ligue affiche maintenant un message de confirmation seulement après que l'écran de combat a réellement été ouvert :
+`✅ Ligue de JOHTO ouverte • objectif 10/16`
+
+Un contrôle interne `verifyJohtoQuickAccessStructure()` vérifie également :
+- la présence du bouton École ;
+- la présence des 8 boutons d'arènes ;
+- les indices 0 à 7 des arènes ;
+- la présence du bouton Ligue ;
+- l'absence d'interaction sur les éléments de la carte.

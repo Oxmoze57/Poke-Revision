@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.6.0-navigation-sous-carte">
+  <meta name="pokeclasse-version" content="1.6.1-johto-acces-rapide-verifie">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -1039,6 +1039,31 @@ main{max-width:1180px}
   .routeQuickGrid{grid-template-columns:1fr}
 }
 
+
+/* ===== Confirmation accès rapide ===== */
+.routeToast{
+ position:fixed;left:50%;bottom:24px;z-index:99999;
+ transform:translate(-50%,18px);opacity:0;pointer-events:none;
+ max-width:min(90vw,620px);padding:11px 16px;border-radius:999px;
+ background:#17324d;color:#fff;font-weight:900;font-size:.82rem;
+ box-shadow:0 12px 28px #0005;transition:.22s
+}
+.routeToast.show{opacity:1;transform:translate(-50%,0)}
+.routeToast.ok{background:#0f766e}
+.routeToast.warn{background:#b45309}
+.routeToast.error{background:#b91c1c}
+
+/* La carte n'est jamais une zone interactive */
+.adventureMap,
+.adventureMap *{
+ -webkit-tap-highlight-color:transparent;
+}
+.adventureMap #arenaNodes,
+.adventureMap .node,
+.adventureMap .mapSpecial{
+ pointer-events:none!important;
+}
+
 </style>
 </head>
 <body>
@@ -1209,10 +1234,10 @@ main{max-width:1180px}
             <h2>Choisis ta destination</h2>
             <p>La carte est maintenant uniquement décorative. Utilise ces boutons pour l’École, les 8 arènes et la Ligue Pokémon.</p>
           </div>
-          <button type="button" class="btn blue" onclick="openSchool()">🏫 École des Dresseurs</button>
+          <button id="routeSchoolButton" type="button" class="btn blue">🏫 École des Dresseurs</button>
         </div>
         <div id="routeQuickGrid" class="routeQuickGrid"></div>
-        <button id="routeLeagueButton" type="button" class="routeLeagueButton locked" onclick="routeOpenLeague(this)">
+        <button id="routeLeagueButton" type="button" class="routeLeagueButton locked">
           <span class="routeLeagueIcon">🏆</span>
           <span class="routeLeagueText">
             <b>Ligue Pokémon</b>
@@ -1790,16 +1815,93 @@ async function quickOpenLeague(button){
 }
 
 
+
+let routeQuickEventsBound=false;
+
+function showRouteToast(message,kind="ok"){
+ let toast=$("routeToast");
+ if(!toast){
+   toast=document.createElement("div");
+   toast.id="routeToast";
+   toast.className="routeToast";
+   document.body.appendChild(toast);
+ }
+ toast.className="routeToast "+kind;
+ toast.textContent=message;
+ toast.classList.add("show");
+ clearTimeout(showRouteToast._timer);
+ showRouteToast._timer=setTimeout(()=>toast.classList.remove("show"),2600);
+}
+
+function bindRouteQuickEvents(){
+ if(routeQuickEventsBound)return;
+ const grid=$("routeQuickGrid");
+ const school=$("routeSchoolButton");
+ const league=$("routeLeagueButton");
+
+ if(grid){
+   grid.addEventListener("click",event=>{
+     const button=event.target.closest(".routeArenaButton");
+     if(!button||!grid.contains(button))return;
+     const arenaIndex=Number(button.dataset.arena);
+     if(!Number.isInteger(arenaIndex)||arenaIndex<0||arenaIndex>7)return;
+     routeOpenArena(arenaIndex);
+   });
+ }
+
+ if(school){
+   school.addEventListener("click",()=>{
+     openSchool();
+   });
+ }
+
+ if(league){
+   league.addEventListener("click",async()=>{
+     await routeOpenLeague(league);
+   });
+ }
+
+ routeQuickEventsBound=true;
+}
+
+
+function verifyJohtoQuickAccessStructure(){
+ const previousRegion=region;
+ region="math";
+ renderMap();
+
+ const result={
+   schoolButton:!!$("routeSchoolButton"),
+   arenaButtons:[...document.querySelectorAll("#routeQuickGrid .routeArenaButton")].length===8,
+   arenaIndexes:[...document.querySelectorAll("#routeQuickGrid .routeArenaButton")].every((b,i)=>Number(b.dataset.arena)===i),
+   leagueButton:!!$("routeLeagueButton"),
+   mapHasNoInteractiveArena:[...document.querySelectorAll(".adventureMap .node")].every(n=>getComputedStyle(n).pointerEvents==="none"),
+   mapHasNoInteractiveSpecial:[...document.querySelectorAll(".adventureMap .mapSpecial")].every(n=>getComputedStyle(n).pointerEvents==="none")
+ };
+
+ result.passed=Object.values(result).every(v=>v===true);
+ window.POKECLASSE_JOHTO_QUICK_ACCESS_CHECK=result;
+ console[result.passed?"info":"error"](
+   result.passed?"✅ Accès rapide Johto vérifié":"❌ Problème accès rapide Johto",
+   result
+ );
+
+ region=previousRegion;
+ renderMap();
+ return result;
+}
+
 function renderRouteQuickAccess(){
  const data=regionMapData[region];
  const grid=$("routeQuickGrid");
  if(!grid)return;
+ bindRouteQuickEvents();
  grid.innerHTML=units[region].map((u,i)=>{
    const done=arenaCompleted(region,i);
    const unlocked=arenaUnlocked(i);
    const badge=data.badges[i];
    const status=done?"completed":unlocked?"available":"locked";
-   return `<button type="button" class="routeArenaButton ${status}" onclick="routeOpenArena(${i})">
+   return `<button type="button" class="routeArenaButton ${status}" data-arena="${i}">
      <span class="routeBadge">${done?"✓":badge[1]}</span>
      <span>
        <b>${i+1}. ${data.cities[i]}</b>
@@ -1829,12 +1931,17 @@ function renderRouteLeagueAccess(){
 }
 
 function routeOpenArena(i){
- selectedArenaIndex=i;
- if(!arenaUnlocked(i)){
-   alert("Cette arène est encore verrouillée. Réussis d’abord la leçon et l’entraînement correspondants.");
-   openSchool();
+ if(!Number.isInteger(i)||i<0||i>=8){
+   console.error("Indice d'arène invalide :",i);
    return;
  }
+ selectedArenaIndex=i;
+ if(!arenaUnlocked(i)){
+   showRouteToast(`Arène ${i+1} verrouillée : passage par l’École requis.`,"warn");
+   setTimeout(()=>openSchool(),250);
+   return;
+ }
+ showRouteToast(`${regionMapData[region].cities[i]} : ouverture de l’arène ${i+1}.`);
  openArena(i);
 }
 
@@ -1842,23 +1949,46 @@ async function routeOpenLeague(button){
  const target=region;
  if(!leagueUnlocked(target)){
    const count=completedInRegion(target);
-   alert(`La Ligue de ${regionName(target)} est encore verrouillée. Tu as ${count}/8 badges.`);
+   showRouteToast(`Ligue de ${regionName(target)} verrouillée : ${count}/8 badges.`,"warn");
    return false;
  }
- const old=button.innerHTML;
- button.disabled=true;
- button.innerHTML='<span class="routeLeagueIcon">⏳</span><span class="routeLeagueText"><b>Préparation de la Ligue…</b><small>Chargement du combat</small></span>';
+
+ const old=button?button.innerHTML:"";
+ if(button){
+   button.disabled=true;
+   button.innerHTML='<span class="routeLeagueIcon">⏳</span><span class="routeLeagueText"><b>Préparation de la Ligue…</b><small>Chargement du combat</small></span>';
+ }
+
  try{
-   // Un seul chemin pour Kanto, Johto et Hoenn.
    await openLeague(target);
-   return true;
- }catch(error){
-   console.error("Erreur ouverture Ligue",error);
+
+   // Confirmation seulement si le combat de Ligue est réellement ouvert.
+   const opened = battle?.league===true && region===target && !$("battle").classList.contains("hidden");
+   if(opened){
+     const objective=target==="ce2"?"15/20":"10/16";
+     showRouteToast(`✅ Ligue de ${regionName(target)} ouverte • objectif ${objective}`,"ok");
+     return true;
+   }
+
+   // Sécurité : si openLeague n'a pas ouvert l'écran, utilise le fallback.
    await startLeagueFallback(target);
-   return true;
+   const fallbackOpened=battle?.league===true && region===target && !$("battle").classList.contains("hidden");
+   if(fallbackOpened){
+     const objective=target==="ce2"?"15/20":"10/16";
+     showRouteToast(`✅ Ligue de ${regionName(target)} ouverte • objectif ${objective}`,"ok");
+     return true;
+   }
+
+   throw new Error("Le combat de Ligue ne s'est pas affiché.");
+ }catch(error){
+   console.error("Erreur accès Ligue",error);
+   showRouteToast(`❌ Impossible d’ouvrir la Ligue de ${regionName(target)}.`,"error");
+   return false;
  }finally{
-   button.disabled=false;
-   button.innerHTML=old;
+   if(button){
+     button.disabled=false;
+     if(old)button.innerHTML=old;
+   }
  }
 }
 
