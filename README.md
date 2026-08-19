@@ -235,3 +235,17 @@ Corrections :
 - les contrôles d'ouverture des arènes et des Ligues attendent la fin de la
   transition avant de conclure à un échec ;
 - le même comportement est utilisé pour Kanto, Johto et Hoenn.
+
+## Version 1.6.6 — Ligue Johto HD et variée
+
+La version de secours de la Ligue Johto utilisait un Tyranocif fixe avec un petit sprite,
+ce qui expliquait à la fois la baisse de qualité visuelle et les rencontres répétitives.
+
+Corrections :
+- illustrations `official-artwork` HD rétablies dans la Ligue ;
+- adversaire Johto choisi aléatoirement parmi Pharamp, Mentali, Noctali, Scarhino,
+  Démolosse, Hyporoi, Donphan, Porygon2, Écrémeuh et Tyranocif ;
+- le jeu évite de proposer deux fois de suite le même adversaire ;
+- les noms sont affichés en français ;
+- les Pokémon légendaires restent réservés au Défi des Légendaires ;
+- le lancement de la Ligue reste indépendant de PokéAPI pour éviter les blocages.

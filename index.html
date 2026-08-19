@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.6.5-parcours-integre-verifie">
+  <meta name="pokeclasse-version" content="1.6.6-ligue-johto-hd-variee">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -1997,7 +1997,7 @@ async function routeOpenArenaDirect(i,button=null){
      enemy:enemyName,league:false,used:[]
    };
    $("enemyImg").src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${enemyId}.png`;
-   $("heroImg").src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
+   $("heroImg").src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png";
    $("enemyName").textContent=enemyName.charAt(0).toUpperCase()+enemyName.slice(1);
    $("heroName").textContent="Pikachu";
    $("battleTitle").textContent=`Arène ${i+1} – ${units[targetRegion][i][0]}`;
@@ -2037,7 +2037,35 @@ async function launchJohtoLeagueGuaranteed(button=null){
 
   currentUnit=7;
 
-  // Build the fight synchronously. No PokéAPI call is required to open it.
+  // Pool local de Pokémon de Johto non légendaires.
+  // On évite ainsi Tyranocif à chaque partie tout en gardant un démarrage fiable.
+  const johtoLeaguePool=[
+    {name:"ampharos",fr:"Pharamp",id:181},
+    {name:"espeon",fr:"Mentali",id:196},
+    {name:"umbreon",fr:"Noctali",id:197},
+    {name:"heracross",fr:"Scarhino",id:214},
+    {name:"houndoom",fr:"Démolosse",id:229},
+    {name:"kingdra",fr:"Hyporoi",id:230},
+    {name:"donphan",fr:"Donphan",id:232},
+    {name:"porygon2",fr:"Porygon2",id:233},
+    {name:"miltank",fr:"Écrémeuh",id:241},
+    {name:"tyranitar",fr:"Tyranocif",id:248}
+  ];
+
+  // Évite autant que possible de revoir immédiatement le même adversaire.
+  const last=localStorage.getItem("pokeClassLastJohtoLeagueEnemy");
+  const available=johtoLeaguePool.filter(x=>x.name!==last);
+  const enemy=pick(available.length?available:johtoLeaguePool);
+  localStorage.setItem("pokeClassLastJohtoLeagueEnemy",enemy.name);
+
+  const partnerData={
+    pikachu:{fr:"Pikachu",id:25},
+    bulbasaur:{fr:"Bulbizarre",id:1},
+    charmander:{fr:"Salamèche",id:4},
+    squirtle:{fr:"Carapuce",id:7}
+  };
+  const hero=partnerData[state.partner]||partnerData.pikachu;
+
   battle={
     arena:7,
     q:0,
@@ -2047,28 +2075,26 @@ async function launchJohtoLeagueGuaranteed(button=null){
     enemyHp:100,
     current:null,
     selected:null,
-    enemy:"tyranitar",
+    enemy:enemy.name,
     league:true,
     used:[]
   };
 
-  // Reliable static sprite URLs. If they fail visually, the quiz still works.
-  $("enemyImg").src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/248.png";
-  $("heroImg").src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
-  $("enemyName").textContent="Tyranocif";
-  $("heroName").textContent="Pikachu";
+  // Illustrations HD "official-artwork" au lieu des petits sprites pixelisés.
+  $("enemyImg").src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${enemy.id}.png`;
+  $("heroImg").src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${hero.id}.png`;
+  $("enemyName").textContent=enemy.fr;
+  $("heroName").textContent=hero.fr;
   $("battleTitle").textContent="Ligue finale – Mathématiques";
-  $("battleObjective")&&($("battleObjective").textContent="Objectif : 10 bonnes réponses sur 16 • Toutes les questions seront posées");
+  $("battleObjective").textContent="Objectif : 10 bonnes réponses sur 16 • Toutes les questions seront posées";
 
-  // Open the battle BEFORE doing anything asynchronous.
   openScreen("battle");
   renderBattle();
   await new Promise(resolve=>setTimeout(resolve,240));
 
-  // Confirmation uniquement après la fin de la transition d'écran.
   const opened=!$("battle").classList.contains("hidden") && battle.league===true && battle.total===16;
   if(opened){
-    showRouteToast("✅ Ligue de JOHTO ouverte • 16 questions • objectif 10/16","ok");
+    showRouteToast(`✅ Ligue de JOHTO ouverte • adversaire : ${enemy.fr} • objectif 10/16`,"ok");
     return true;
   }
 
@@ -2307,13 +2333,13 @@ async function startLeagueFallback(targetRegion){
  region=targetRegion;
  currentUnit=7;
  const fallbackEnemy={
-   fr:{name:"dragonite",fr:"Dracolosse",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png"},
-   math:{name:"tyranitar",fr:"Tyranocif",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/248.png"},
-   ce2:{name:"metagross",fr:"Métalosse",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png"}
+   fr:{name:"dragonite",fr:"Dracolosse",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png"},
+   math:{name:"tyranitar",fr:"Tyranocif",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/248.png"},
+   ce2:{name:"metagross",fr:"Métalosse",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/376.png"}
  }[region];
  let hero;
  try{hero=await poke(state.partner||"pikachu")}
- catch(e){hero={name:"pikachu",fr:"Pikachu",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"}}
+ catch(e){hero={name:"pikachu",fr:"Pikachu",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"}}
  battle={
    arena:7,q:0,total:region==="ce2"?20:16,score:0,
    heroHp:100,enemyHp:100,current:null,selected:null,

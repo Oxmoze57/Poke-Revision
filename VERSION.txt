@@ -1,1 +1,1 @@
-PokéClasse 1.6.5 — Clic Ligue réparé + transitions fiabilisées
+PokéClasse 1.6.6 — Ligue Johto : Pokémon HD et adversaires variés
