@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.5.4-acces-rapide-ligue">
+  <meta name="pokeclasse-version" content="1.5.5-ligue-johto-corrigee">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -1111,7 +1111,7 @@ main{max-width:1180px}
         <div id="regionArtwork" class="regionArtwork" aria-hidden="true"><img id="regionMapImage" alt="" draggable="false"></div>
         <svg id="routeLayer" class="routeLayer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
         <button class="mapSpecial school" onclick="openSchool()"><span class="specialIcon">🏫</span><span><b>ÉCOLE</b><small>des Dresseurs</small></span></button>
-        <button id="leagueNode" class="mapSpecial league locked" onclick="openLeague()"><span class="specialIcon">♛</span><span><b>LIGUE</b><small id="leagueStatus">Verrouillée</small></span></button>
+        <button id="leagueNode" class="mapSpecial league locked" onclick="openLeague(region)"><span class="specialIcon">♛</span><span><b>LIGUE</b><small id="leagueStatus">Verrouillée</small></span></button>
         <div id="arenaNodes"></div>
 
         <div class="progressDock">
@@ -1427,6 +1427,20 @@ function renderRegionHub(){
 function chooseRegion(r){region=r;selectedArenaIndex=nextUnitIndex(r);openScreen("map")}
 function arenaUnlocked(i){return !!state.school[region+"-"+i]}
 function leagueUnlocked(){return units[region].every((_,i)=>state.arenas[region+"-"+i])}
+
+function migrateLeagueProgress(){
+ ["fr","math","ce2"].forEach(r=>{
+   if(state.leagues?.[r]){
+     for(let i=0;i<8;i++){
+       state.arenas[r+"-"+i]=true;
+       const badgeId=r+"-"+i;
+       if(!state.badges.includes(badgeId))state.badges.push(badgeId);
+     }
+   }
+ });
+ save();
+}
+
 const regionMapData={
  fr:{
   image:"assets/maps/kanto-esthetique.jpg",
@@ -1475,8 +1489,8 @@ function renderLeagueQuickAccess(){
  const won=!!state.leagues[region], ready=leagueUnlocked();
  btn.className="leagueQuickButton "+(won?"completed":ready?"ready":"locked");
  if(won){
-   status.textContent="Ligue remportée • Rejouable";
-   btn.title="Rejouer la Ligue Pokémon";
+   status.textContent="Ligue remportée • Cliquer pour rejouer";
+   btn.title=`Rejouer la Ligue Pokémon de ${regionName(region)}`;
  }else if(ready){
    status.textContent=region==="ce2"?"20 questions • objectif 15/20":"16 questions • objectif 10/16";
    btn.title="Entrer dans la Ligue Pokémon";
@@ -1487,12 +1501,14 @@ function renderLeagueQuickAccess(){
  }
 }
 function quickOpenLeague(){
- if(!leagueUnlocked()){
+ const alreadyChampion=!!state.leagues[region];
+ const ready=leagueUnlocked();
+ if(!ready&&!alreadyChampion){
    const count=completedInRegion(region);
    alert(`La Ligue est encore verrouillée. Il te faut les 8 badges de ${regionName(region)}. Tu en as actuellement ${count}/8.`);
    return;
  }
- openLeague();
+ openLeague(region);
 }
 
 function renderArenaQuickNav(){
@@ -1660,7 +1676,16 @@ function openArena(i){
  openScreen("arenaScreen");
 }
 async function startArenaBattle(){await startBattle(false)}
-function openLeague(){if(!leagueUnlocked()){alert("Remporte les 8 arènes de cette région.");return}currentUnit=7;startBattle(true)}
+function openLeague(targetRegion=region){
+ region=targetRegion;
+ const alreadyChampion=!!state.leagues[region];
+ if(!leagueUnlocked()&&!alreadyChampion){
+  alert(`Remporte les 8 arènes de ${regionName(region)} avant d’accéder à la Ligue.`);
+  return;
+ }
+ currentUnit=7;
+ startBattle(true);
+}
 const regionalDexCache={fr:null,math:null,ce2:null};
 
 async function loadRegionalDex(r){

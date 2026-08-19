@@ -1,1 +1,1 @@
-PokéClasse 1.5.4 — Accès rapide à la Ligue Pokémon
+PokéClasse 1.5.5 — Correction accès Ligue Johto

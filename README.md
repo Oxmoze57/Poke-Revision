@@ -56,3 +56,14 @@ Le panneau d’accès direct de chaque région contient maintenant un bouton **L
 - Kanto et Johto affichent clairement : **16 questions • objectif 10/16**.
 - Hoenn affiche : **20 questions • objectif 15/20**.
 - Une Ligue déjà remportée reste accessible et rejouable depuis ce même bouton.
+
+## Version 1.5.5 — Correction de l’accès rapide à la Ligue de Johto
+
+Le bouton de Ligue est maintenant lié explicitement à la région active.
+
+Un cas de compatibilité avec les anciennes sauvegardes a aussi été corrigé :
+si une Ligue avait déjà été remportée dans une ancienne version, elle reste
+rejouable même si les huit indicateurs d’arène n’avaient pas tous été enregistrés.
+
+Au chargement, PokéClasse remet également en cohérence les badges et arènes
+d’une région dont la Ligue a déjà été gagnée.
