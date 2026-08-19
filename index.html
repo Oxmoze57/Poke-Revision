@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.6.1-johto-acces-rapide-verifie">
+  <meta name="pokeclasse-version" content="1.6.5-parcours-integre-verifie">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -1064,6 +1064,12 @@ main{max-width:1180px}
  pointer-events:none!important;
 }
 
+
+.routeArenaButton.opening{
+ opacity:.75;cursor:wait;transform:scale(.98)!important;
+}
+.routeArenaButton:disabled{cursor:wait}
+
 </style>
 </head>
 <body>
@@ -1237,7 +1243,7 @@ main{max-width:1180px}
           <button id="routeSchoolButton" type="button" class="btn blue">🏫 École des Dresseurs</button>
         </div>
         <div id="routeQuickGrid" class="routeQuickGrid"></div>
-        <button id="routeLeagueButton" type="button" class="routeLeagueButton locked">
+        <button id="routeLeagueButton" type="button" class="routeLeagueButton locked" onclick="routeOpenLeague(this)">
           <span class="routeLeagueIcon">🏆</span>
           <span class="routeLeagueText">
             <b>Ligue Pokémon</b>
@@ -1301,6 +1307,7 @@ main{max-width:1180px}
 
 <section id="battle" class="card hidden">
 <div class="row"><button class="btn ghost" onclick="openScreen('map')">← Abandonner</button><span class="pill" id="battleTitle"></span><span class="pill">Question <b id="battleNum"></b>/<b id="battleTotal"></b></span></div>
+<div id="battleObjective" class="battleObjective">Objectif du combat</div>
 <div class="battlefield">
 <div id="enemyF" class="fighter enemy"><div class="hpbox"><span id="enemyName"></span><div class="hp"><div id="enemyHp"></div></div></div><img id="enemyImg" alt=""></div>
 <div id="heroF" class="fighter heroF"><img id="heroImg" alt=""><div class="hpbox"><span id="heroName"></span><div class="hp"><div id="heroHp"></div></div></div></div>
@@ -1670,7 +1677,9 @@ function renderRegionHub(){
  if($("hoennNext"))$("hoennNext").textContent=ce2Done===8?"Ligue CE2 de Hoenn":ce2Next;
 }
 function chooseRegion(r){region=r;selectedArenaIndex=nextUnitIndex(r);openScreen("map")}
-function arenaUnlocked(i){return !!state.school[region+"-"+i]}
+function arenaUnlocked(i){
+ return !!state.school?.[region+"-"+i] || arenaCompleted(region,i);
+}
 function leagueUnlocked(r=region){
  return !!state.leagues?.[r] || units[r].every((_,i)=>arenaCompleted(r,i));
 }
@@ -1840,13 +1849,7 @@ function bindRouteQuickEvents(){
  const league=$("routeLeagueButton");
 
  if(grid){
-   grid.addEventListener("click",event=>{
-     const button=event.target.closest(".routeArenaButton");
-     if(!button||!grid.contains(button))return;
-     const arenaIndex=Number(button.dataset.arena);
-     if(!Number.isInteger(arenaIndex)||arenaIndex<0||arenaIndex>7)return;
-     routeOpenArena(arenaIndex);
-   });
+   // Les boutons d'arènes utilisent désormais un onclick direct et indépendant.
  }
 
  if(school){
@@ -1856,9 +1859,7 @@ function bindRouteQuickEvents(){
  }
 
  if(league){
-   league.addEventListener("click",async()=>{
-     await routeOpenLeague(league);
-   });
+   // Le bouton Ligue possède un onclick direct, comme les boutons d'arènes.
  }
 
  routeQuickEventsBound=true;
@@ -1901,11 +1902,11 @@ function renderRouteQuickAccess(){
    const unlocked=arenaUnlocked(i);
    const badge=data.badges[i];
    const status=done?"completed":unlocked?"available":"locked";
-   return `<button type="button" class="routeArenaButton ${status}" data-arena="${i}">
+   return `<button type="button" class="routeArenaButton ${status}" data-arena="${i}" onclick="routeOpenArenaDirect(${i},this)">
      <span class="routeBadge">${done?"✓":badge[1]}</span>
      <span>
        <b>${i+1}. ${data.cities[i]}</b>
-       <small>${u[0]} • ${done?"Terminée":unlocked?"Accessible":"École requise"}</small>
+       <small>${u[0]} • ${done?"Terminée • Rejouer":unlocked?"Accessible":"École requise"}</small>
      </span>
    </button>`;
  }).join("");
@@ -1916,37 +1917,168 @@ function renderRouteLeagueAccess(){
  const button=$("routeLeagueButton"),status=$("routeLeagueStatus");
  if(!button||!status)return;
  const won=!!state.leagues?.[region];
- const ready=leagueUnlocked(region);
+ const ready=region==="math"?johtoLeagueAccessAllowed():leagueUnlocked(region);
  button.className="routeLeagueButton "+(won?"completed":ready?"ready":"locked");
  if(won){
    status.textContent=`Ligue de ${regionName(region)} remportée • Rejouer`;
  }else if(ready){
-   status.textContent=region==="ce2"
-     ?"20 questions • objectif 15/20"
-     :"16 questions • objectif 10/16";
+   status.textContent=region==="math"
+     ?"JOHTO • PRÊTE • 16 questions • objectif 10/16"
+     :region==="ce2"
+       ?"20 questions • objectif 15/20"
+       :"16 questions • objectif 10/16";
  }else{
    const count=completedInRegion(region);
    status.textContent=`${count}/8 badges • ${8-count} restant${8-count>1?"s":""}`;
  }
 }
 
-function routeOpenArena(i){
- if(!Number.isInteger(i)||i<0||i>=8){
-   console.error("Indice d'arène invalide :",i);
-   return;
- }
+
+async function routeOpenArenaDirect(i,button=null){
+ if(!Number.isInteger(i)||i<0||i>=8)return false;
+
  selectedArenaIndex=i;
- if(!arenaUnlocked(i)){
-   showRouteToast(`Arène ${i+1} verrouillée : passage par l’École requis.`,"warn");
-   setTimeout(()=>openSchool(),250);
-   return;
+ const targetRegion=region;
+ const alreadyDone=arenaCompleted(targetRegion,i);
+ const unlocked=arenaUnlocked(i);
+
+ if(!unlocked&&!alreadyDone){
+   showRouteToast(`Arène ${i+1} verrouillée : réussis d’abord l’entraînement.`,"warn");
+   return false;
  }
- showRouteToast(`${regionMapData[region].cities[i]} : ouverture de l’arène ${i+1}.`);
- openArena(i);
+
+ const old=button?button.innerHTML:"";
+ if(button){
+   button.disabled=true;
+   button.classList.add("opening");
+ }
+
+ try{
+   currentUnit=i;
+   showRouteToast(`${regionMapData[targetRegion].cities[i]} • préparation du combat…`,"ok");
+
+   // On ouvre d'abord l'écran d'arène : cela confirme visuellement que le clic a fonctionné.
+   openArena(i);
+
+   // Puis on démarre le combat directement après une très courte transition.
+   await new Promise(resolve=>setTimeout(resolve,180));
+   await startArenaBattle();
+   await new Promise(resolve=>setTimeout(resolve,240));
+
+   const opened = battle && battle.league===false &&
+     battle.arena===i && !$("battle").classList.contains("hidden");
+
+   if(opened){
+     showRouteToast(`✅ Combat d’arène ${i+1} ouvert.`,"ok");
+     return true;
+   }
+
+   throw new Error("L’écran de combat ne s’est pas ouvert.");
+ }catch(error){
+   console.error("Erreur ouverture arène",error);
+
+   // Secours hors réseau : crée un combat local avec un adversaire fixe.
+   const fallbackByRegion={
+     fr:["geodude","starmie","raichu","vileplume","weezing","alakazam","arcanine","rhydon"],
+     math:["pidgeotto","scyther","miltank","gengar","poliwrath","steelix","piloswine","kingdra"],
+     ce2:["nosepass","makuhita","manectric","torkoal","slaking","altaria","lunatone","milotic"]
+   };
+   const enemyName=fallbackByRegion[targetRegion][i];
+   const enemyId={
+     geodude:74,starmie:121,raichu:26,vileplume:45,weezing:110,alakazam:65,arcanine:59,rhydon:112,
+     pidgeotto:17,scyther:123,miltank:241,gengar:94,poliwrath:62,steelix:208,piloswine:221,kingdra:230,
+     nosepass:299,makuhita:296,manectric:310,torkoal:324,slaking:289,altaria:334,lunatone:337,milotic:350
+   }[enemyName];
+
+   battle={
+     arena:i,q:0,
+     total:targetRegion==="ce2"?[7,7,8,10,8,6,8,10][i]:5+i,
+     score:0,heroHp:100,enemyHp:100,current:null,selected:null,
+     enemy:enemyName,league:false,used:[]
+   };
+   $("enemyImg").src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${enemyId}.png`;
+   $("heroImg").src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
+   $("enemyName").textContent=enemyName.charAt(0).toUpperCase()+enemyName.slice(1);
+   $("heroName").textContent="Pikachu";
+   $("battleTitle").textContent=`Arène ${i+1} – ${units[targetRegion][i][0]}`;
+   $("battleObjective")&&($("battleObjective").textContent=`Objectif : au moins ${Math.ceil(battle.total*.7)} bonnes réponses sur ${battle.total}`);
+   openScreen("battle");
+   renderBattle();
+   await new Promise(resolve=>setTimeout(resolve,240));
+   showRouteToast(`✅ Combat d’arène ${i+1} ouvert en mode secours.`,"ok");
+   return true;
+ }finally{
+   if(button){
+     button.disabled=false;
+     button.classList.remove("opening");
+     if(old)button.innerHTML=old;
+   }
+ }
+}
+
+function routeOpenArena(i){
+ return routeOpenArenaDirect(i,null);
+}
+
+
+function johtoLeagueAccessAllowed(){
+  // Uses the exact same completion source as the quick-access arena buttons.
+  return completedInRegion("math")>=8 || !!state.leagues?.math;
+}
+
+async function launchJohtoLeagueGuaranteed(button=null){
+  region="math";
+
+  if(!johtoLeagueAccessAllowed()){
+    const count=completedInRegion("math");
+    showRouteToast(`Ligue de JOHTO verrouillée : ${count}/8 badges.`,"warn");
+    return false;
+  }
+
+  currentUnit=7;
+
+  // Build the fight synchronously. No PokéAPI call is required to open it.
+  battle={
+    arena:7,
+    q:0,
+    total:16,
+    score:0,
+    heroHp:100,
+    enemyHp:100,
+    current:null,
+    selected:null,
+    enemy:"tyranitar",
+    league:true,
+    used:[]
+  };
+
+  // Reliable static sprite URLs. If they fail visually, the quiz still works.
+  $("enemyImg").src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/248.png";
+  $("heroImg").src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
+  $("enemyName").textContent="Tyranocif";
+  $("heroName").textContent="Pikachu";
+  $("battleTitle").textContent="Ligue finale – Mathématiques";
+  $("battleObjective")&&($("battleObjective").textContent="Objectif : 10 bonnes réponses sur 16 • Toutes les questions seront posées");
+
+  // Open the battle BEFORE doing anything asynchronous.
+  openScreen("battle");
+  renderBattle();
+  await new Promise(resolve=>setTimeout(resolve,240));
+
+  // Confirmation uniquement après la fin de la transition d'écran.
+  const opened=!$("battle").classList.contains("hidden") && battle.league===true && battle.total===16;
+  if(opened){
+    showRouteToast("✅ Ligue de JOHTO ouverte • 16 questions • objectif 10/16","ok");
+    return true;
+  }
+
+  showRouteToast("❌ La Ligue de JOHTO n’a pas pu s’ouvrir.","error");
+  return false;
 }
 
 async function routeOpenLeague(button){
  const target=region;
+ if(target==="math")return launchJohtoLeagueGuaranteed(button);
  if(!leagueUnlocked(target)){
    const count=completedInRegion(target);
    showRouteToast(`Ligue de ${regionName(target)} verrouillée : ${count}/8 badges.`,"warn");
@@ -1961,6 +2093,7 @@ async function routeOpenLeague(button){
 
  try{
    await openLeague(target);
+   await new Promise(resolve=>setTimeout(resolve,240));
 
    // Confirmation seulement si le combat de Ligue est réellement ouvert.
    const opened = battle?.league===true && region===target && !$("battle").classList.contains("hidden");
@@ -1972,6 +2105,7 @@ async function routeOpenLeague(button){
 
    // Sécurité : si openLeague n'a pas ouvert l'écran, utilise le fallback.
    await startLeagueFallback(target);
+   await new Promise(resolve=>setTimeout(resolve,240));
    const fallbackOpened=battle?.league===true && region===target && !$("battle").classList.contains("hidden");
    if(fallbackOpened){
      const objective=target==="ce2"?"15/20":"10/16";
@@ -2190,9 +2324,9 @@ async function startLeagueFallback(targetRegion){
  $("enemyName").textContent=fallbackEnemy.fr;
  $("heroName").textContent=hero.fr;
  $("battleTitle").textContent=`Ligue finale – ${regionStudy(region)}`;
- $("battleObjective").textContent=region==="ce2"
+ $("battleObjective")&&($("battleObjective").textContent=region==="ce2"
    ?"Objectif : 15 bonnes réponses sur 20 • Toutes les questions seront posées"
-   :"Objectif : 10 bonnes réponses sur 16 • Toutes les questions seront posées";
+   :"Objectif : 10 bonnes réponses sur 16 • Toutes les questions seront posées");
  openScreen("battle");
  renderBattle();
 }
@@ -2272,9 +2406,9 @@ async function startBattle(league){
    $("enemyName").textContent=enemy.fr;
    $("heroName").textContent=hero.fr;
    $("battleTitle").textContent=league?`Ligue finale – ${regionStudy(region)}`:`Arène ${currentUnit+1} – ${units[region][currentUnit][0]}`;
-   $("battleObjective").textContent=league
+   $("battleObjective")&&($("battleObjective").textContent=league
      ? `Objectif : ${region==="ce2"?"15 bonnes réponses sur 20":"10 bonnes réponses sur 16"} • Toutes les questions seront posées`
-     : `Objectif : au moins ${Math.ceil(battle.total*.7)} bonnes réponses sur ${battle.total}`;
+     : `Objectif : au moins ${Math.ceil(battle.total*.7)} bonnes réponses sur ${battle.total}`);
    openScreen("battle");
    renderBattle();
  }catch(error){

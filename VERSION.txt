@@ -1,1 +1,1 @@
-PokéClasse 1.6.1 — Accès rapide Johto vérifié et clics fiabilisés
+PokéClasse 1.6.5 — Clic Ligue réparé + transitions fiabilisées

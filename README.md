@@ -176,3 +176,62 @@ Un contrôle interne `verifyJohtoQuickAccessStructure()` vérifie également :
 - les indices 0 à 7 des arènes ;
 - la présence du bouton Ligue ;
 - l'absence d'interaction sur les éléments de la carte.
+
+## Version 1.6.2 — Ouverture garantie de la Ligue Johto
+
+La Ligue Johto utilise maintenant un lanceur totalement séparé.
+
+Dès que l'accès rapide affiche les 8 arènes comme terminées :
+- la Ligue est considérée comme accessible ;
+- le clic ne dépend plus de PokéAPI ;
+- le combat est créé immédiatement en mémoire ;
+- l'écran de combat est ouvert de façon synchrone ;
+- la Ligue contient exactement 16 questions ;
+- l'objectif est 10/16 ;
+- un message confirme : `✅ Ligue de JOHTO ouverte`.
+
+Le bouton possède aussi un gestionnaire direct de secours. Ainsi, même si le
+gestionnaire d'événement général de l'accès rapide rencontrait un problème,
+le clic Johto dispose encore d'un chemin indépendant.
+
+## Version 1.6.3 — Correction des combats d'arènes
+
+La simplification précédente de la navigation avait créé un conflit entre le
+gestionnaire de clic global et les boutons recréés dynamiquement.
+
+Corrections :
+- chaque bouton d'arène possède désormais son propre clic direct ;
+- une arène déjà gagnée est toujours rejouable, même avec une ancienne sauvegarde
+  où le drapeau de l'École est absent ;
+- le bouton ouvre directement le combat après une courte transition ;
+- un message confirme l'ouverture du combat ;
+- si PokéAPI échoue, un adversaire de secours permet quand même de jouer ;
+- la carte reste totalement décorative et n'est jamais utilisée pour lancer un combat.
+
+## Version 1.6.4 — Correction trouvée pendant le test du parcours complet
+
+Le test réel du parcours a mis en évidence une régression : les fonctions de
+lancement des combats écrivaient dans `battleObjective`, mais cet élément avait
+disparu de l'écran de combat. Une exception JavaScript interrompait alors
+l'ouverture des combats d'arène.
+
+Correction :
+- restauration de `battleObjective` dans l'écran de combat ;
+- accès à cet élément rendu défensif pour éviter qu'une future modification
+  graphique ne bloque à nouveau un combat.
+
+## Version 1.6.5 — Correction du clic Ligue et des transitions
+
+Deux problèmes ont été identifiés pendant le test du parcours complet :
+
+1. le `onclick` du bouton Ligue Johto contenait des antislashs littéraux autour
+   de `math`, ce qui rendait le gestionnaire inline invalide dans le navigateur ;
+2. l'application vérifiait parfois l'ouverture d'un combat immédiatement alors
+   que la transition visuelle entre écrans dure 170 ms.
+
+Corrections :
+- le bouton Ligue utilise désormais simplement `routeOpenLeague(this)` ;
+- il n'existe plus de gestionnaire concurrent pour ce bouton ;
+- les contrôles d'ouverture des arènes et des Ligues attendent la fin de la
+  transition avant de conclure à un échec ;
+- le même comportement est utilisé pour Kanto, Johto et Hoenn.
