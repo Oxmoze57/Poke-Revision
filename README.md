@@ -35,3 +35,14 @@ Puis, dans GitHub Desktop :
 7. rechargez le site avec `Ctrl + F5`.
 
 Le Défi des Légendaires d’une région reste verrouillé tant que sa Ligue n’a pas été remportée.
+
+## Version 1.5.3 — Correction des Ligues
+
+Le combat de Ligue ne peut plus se terminer avant que toutes les questions aient été posées.
+
+- Ligue Kanto : **16 questions obligatoires**, réussite à partir de **10/16**.
+- Ligue Johto : **16 questions obligatoires**, réussite à partir de **10/16**.
+- Ligue Hoenn CE2 : **20 questions obligatoires**, réussite à partir de **15/20**.
+- Les barres de PV pendant une Ligue sont désormais visuelles et ne provoquent plus une fin prématurée.
+- L’objectif est affiché clairement sous le titre du combat.
+- Les arènes normales conservent leur fonctionnement actuel.

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.5.2-finale">
+  <meta name="pokeclasse-version" content="1.5.3-ligue-corrigee">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -932,6 +932,12 @@ main{max-width:1180px}
  .legendBattleStatus{top:8px;font-size:.7rem}
 }
 
+
+.battleObjective{
+ display:inline-block;margin:4px 0 10px;padding:7px 11px;border-radius:999px;
+ background:#e8f6ff;border:2px solid #b8dff3;color:#174b69;font-size:.82rem;font-weight:900
+}
+
 </style>
 </head>
 <body>
@@ -1676,13 +1682,56 @@ async function startBattle(league){
  $("enemyName").textContent=enemy.fr;
  $("heroName").textContent=hero.fr;
  $("battleTitle").textContent=league?`Ligue finale – ${regionStudy(region)}`:`Arène ${currentUnit+1} – ${units[region][currentUnit][0]}`;
+ $("battleObjective").textContent=league
+   ? `Objectif : ${region==="ce2"?"15 bonnes réponses sur 20":"10 bonnes réponses sur 16"} • Toutes les questions seront posées`
+   : `Objectif : au moins ${Math.ceil(battle.total*.7)} bonnes réponses sur ${battle.total}`;
  openScreen("battle");
  renderBattle();
 }
 function renderBattle(){battle.current=makeUniqueQuestion(battle.league?"mix":units[region][battle.arena][2],battle.arena,battle.used);battle.selected=null;$("battleNum").textContent=battle.q+1;$("battleTotal").textContent=battle.total;$("battleQuestion").textContent=battle.current.q;$("battleChoices").innerHTML=battle.current.choices.map(c=>`<button class="choice" onclick="selectBattle(this,'${String(c).replaceAll("'","\\'")}')">${c}</button>`).join("");$("battleFeedback").innerHTML="";$("battleValidate").classList.remove("hidden");$("battleNext").classList.add("hidden");updateHp();syncAutoReadControls();if(autoReadQuestions)setTimeout(speakBattle,360)}
 function selectBattle(el,v){battle.selected=v;document.querySelectorAll("#battleChoices .choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
-function validateBattle(){if(battle.selected===null){alert("Choisis une réponse.");return}let ok=String(battle.selected)===String(battle.current.a);if(ok){battle.score++;battle.enemyHp=Math.max(0,battle.enemyHp-(100/battle.total+4));$("heroF").classList.add("attack");$("enemyF").classList.add("hit")}else{battle.heroHp=Math.max(0,battle.heroHp-(100/battle.total+5));$("enemyF").classList.add("attack");$("heroF").classList.add("hit")}setTimeout(()=>document.querySelectorAll(".fighter").forEach(x=>x.classList.remove("attack","hit")),500);$("battleFeedback").className="feedback "+(ok?"ok":"ko");$("battleFeedback").innerHTML=(ok?"✅ Attaque réussie ! ":"❌ Bonne réponse : <b>"+battle.current.a+"</b>. ")+battle.current.ex+(battle.current.steps?`<div class="correction">${battle.current.steps}</div>`:"");$("battleValidate").classList.add("hidden");$("battleNext").classList.remove("hidden");updateHp()}
-function nextBattle(){battle.q++;if(battle.q>=battle.total||battle.enemyHp<=0||battle.heroHp<=0)return finishBattle();renderBattle()}
+function validateBattle(){
+ if(battle.selected===null){alert("Choisis une réponse.");return}
+ let ok=String(battle.selected)===String(battle.current.a);
+ if(ok){
+   battle.score++;
+   if(battle.league){
+     const need=region==="ce2"?15:10;
+     battle.enemyHp=Math.max(5,battle.enemyHp-(95/need));
+   }else{
+     battle.enemyHp=Math.max(0,battle.enemyHp-(100/battle.total+4));
+   }
+   $("heroF").classList.add("attack");$("enemyF").classList.add("hit");
+ }else{
+   if(battle.league){
+     const allowedErrors=battle.total-(region==="ce2"?15:10)+1;
+     battle.heroHp=Math.max(5,battle.heroHp-(95/allowedErrors));
+   }else{
+     battle.heroHp=Math.max(0,battle.heroHp-(100/battle.total+5));
+   }
+   $("enemyF").classList.add("attack");$("heroF").classList.add("hit");
+ }
+ setTimeout(()=>document.querySelectorAll(".fighter").forEach(x=>x.classList.remove("attack","hit")),500);
+ $("battleFeedback").className="feedback "+(ok?"ok":"ko");
+ $("battleFeedback").innerHTML=(ok?"✅ Attaque réussie ! ":"❌ Bonne réponse : <b>"+battle.current.a+"</b>. ")+battle.current.ex+(battle.current.steps?`<div class="correction">${battle.current.steps}</div>`:"");
+ $("battleValidate").classList.add("hidden");
+ $("battleNext").classList.remove("hidden");
+ updateHp();
+}
+function nextBattle(){
+ battle.q++;
+ // En Ligue, les PV sont uniquement visuels : on joue obligatoirement toutes les questions.
+ if(battle.league){
+   if(battle.q>=battle.total)return finishBattle();
+   // Empêche une barre de PV vide de mettre fin visuellement au combat avant la dernière question.
+   battle.heroHp=Math.max(5,battle.heroHp);
+   battle.enemyHp=Math.max(5,battle.enemyHp);
+   renderBattle();
+   return;
+ }
+ if(battle.q>=battle.total||battle.enemyHp<=0||battle.heroHp<=0)return finishBattle();
+ renderBattle();
+}
 function updateHp(){$("heroHp").style.width=battle.heroHp+"%";$("enemyHp").style.width=battle.enemyHp+"%"}
 function capturePokemon(name,source){
  const existing=state.pokedex[name]||{count:0,firstSource:source,lastSource:source};
@@ -1695,7 +1744,12 @@ function capturePokemon(name,source){
 }
 
 function finishBattle(){
- let need=battle.league?(region==="ce2"?15:12):Math.ceil(battle.total*.7),win=battle.score>=need;
+ let need=battle.league?(region==="ce2"?15:10):Math.ceil(battle.total*.7),win=battle.score>=need;
+ if(battle.league){
+   if(win){battle.enemyHp=0;battle.heroHp=Math.max(15,battle.heroHp)}
+   else{battle.heroHp=0;battle.enemyHp=Math.max(15,battle.enemyHp)}
+   updateHp();
+ }
  if(win){
   if(battle.league){
    state.leagues[region]=true;

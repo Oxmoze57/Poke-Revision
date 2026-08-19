@@ -1,2 +1,3 @@
-PokéClasse — Version finale 1.5.2
-Kanto + Johto + Hoenn CE2 + Défi des Légendaires avec combats animés.
+PokéClasse 1.5.3 — Correction des Ligues Pokémon
+Kanto/Johto : 16 questions complètes, objectif 10/16.
+Hoenn : 20 questions complètes, objectif 15/20.
