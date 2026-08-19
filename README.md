@@ -143,3 +143,15 @@ Quand Johto possède 8 badges ou que sa Ligue a déjà été gagnée :
 Cette modification cible uniquement Johto afin de supprimer les conflits
 résiduels entre le changement de région, les anciennes sauvegardes et le
 lanceur générique de Ligue.
+
+## Version 1.6.0 — Navigation simplifiée des régions
+
+Les cartes de Kanto, Johto et Hoenn ne servent plus de boutons.
+
+- les marqueurs, l'École et la Ligue dessinés sur la carte sont décoratifs ;
+- un seul panneau **Accès rapide** est placé sous la carte ;
+- les 8 arènes sont accessibles par de grands boutons faciles à utiliser ;
+- l'École des Dresseurs possède son propre bouton ;
+- la Ligue Pokémon possède un grand bouton unique sous les arènes ;
+- la même logique est utilisée pour Kanto, Johto et Hoenn ;
+- cela élimine les conflits liés aux zones de clic superposées sur les cartes.

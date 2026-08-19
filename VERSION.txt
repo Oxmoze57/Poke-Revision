@@ -1,1 +1,1 @@
-PokéClasse 1.5.9 — Ouverture directe de la Ligue Johto
+PokéClasse 1.6.0 — Cartes décoratives et accès rapide sous la carte
