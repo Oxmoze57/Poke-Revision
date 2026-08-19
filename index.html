@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.5.5-ligue-johto-corrigee">
+  <meta name="pokeclasse-version" content="1.5.6-ligue-bouton-fiable">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -958,6 +958,9 @@ main{max-width:1180px}
  .leagueQuickButton .leagueQuickIcon{font-size:1.2rem}
 }
 
+
+.leagueQuickButton:disabled{cursor:wait;opacity:.8;transform:none!important}
+
 </style>
 </head>
 <body>
@@ -1111,7 +1114,7 @@ main{max-width:1180px}
         <div id="regionArtwork" class="regionArtwork" aria-hidden="true"><img id="regionMapImage" alt="" draggable="false"></div>
         <svg id="routeLayer" class="routeLayer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
         <button class="mapSpecial school" onclick="openSchool()"><span class="specialIcon">🏫</span><span><b>ÉCOLE</b><small>des Dresseurs</small></span></button>
-        <button id="leagueNode" class="mapSpecial league locked" onclick="openLeague(region)"><span class="specialIcon">♛</span><span><b>LIGUE</b><small id="leagueStatus">Verrouillée</small></span></button>
+        <button id="leagueNode" class="mapSpecial league locked" onclick="quickOpenLeague(this)"><span class="specialIcon">♛</span><span><b>LIGUE</b><small id="leagueStatus">Verrouillée</small></span></button>
         <div id="arenaNodes"></div>
 
         <div class="progressDock">
@@ -1127,7 +1130,7 @@ main{max-width:1180px}
       <div class="arenaQuickAccess">
         <div class="arenaQuickTitle"><span>Accès direct</span><small>Les 8 arènes et la Ligue restent accessibles depuis ce panneau.</small></div>
         <div id="arenaQuickNav" class="arenaQuickNav"></div>
-        <button id="leagueQuickButton" type="button" class="leagueQuickButton locked" onclick="quickOpenLeague()">
+        <button id="leagueQuickButton" type="button" class="leagueQuickButton locked" onclick="quickOpenLeague(this)">
           <span class="leagueQuickIcon">🏆</span>
           <span><b>Ligue Pokémon</b><small id="leagueQuickStatus">8 badges requis</small></span>
           <span class="leagueQuickArrow">→</span>
@@ -1500,15 +1503,33 @@ function renderLeagueQuickAccess(){
    btn.title="Obtiens les 8 badges pour débloquer la Ligue";
  }
 }
-function quickOpenLeague(){
- const alreadyChampion=!!state.leagues[region];
- const ready=leagueUnlocked();
+async function quickOpenLeague(button){
+ const targetRegion=region;
+ const alreadyChampion=!!state.leagues[targetRegion];
+ const ready=units[targetRegion].every((_,i)=>state.arenas[targetRegion+"-"+i]);
  if(!ready&&!alreadyChampion){
-   const count=completedInRegion(region);
-   alert(`La Ligue est encore verrouillée. Il te faut les 8 badges de ${regionName(region)}. Tu en as actuellement ${count}/8.`);
+   const count=units[targetRegion].filter((_,i)=>state.arenas[targetRegion+"-"+i]).length;
+   alert(`La Ligue est encore verrouillée. Il te faut les 8 badges de ${regionName(targetRegion)}. Tu en as actuellement ${count}/8.`);
    return;
  }
- openLeague(region);
+ const oldText=button?button.innerHTML:"";
+ if(button){
+   button.disabled=true;
+   button.innerHTML='<span class="leagueQuickIcon">⏳</span><span><b>Préparation de la Ligue…</b><small>Chargement du combat</small></span>';
+ }
+ try{
+   await openLeague(targetRegion);
+ }catch(error){
+   console.error("Erreur ouverture Ligue",error);
+   alert("La Ligue n’a pas pu démarrer correctement. Le jeu va utiliser un adversaire de secours.");
+   await startLeagueFallback(targetRegion);
+ }finally{
+   if(button){
+     button.disabled=false;
+     button.innerHTML=oldText;
+     renderLeagueQuickAccess();
+   }
+ }
 }
 
 function renderArenaQuickNav(){
@@ -1676,16 +1697,46 @@ function openArena(i){
  openScreen("arenaScreen");
 }
 async function startArenaBattle(){await startBattle(false)}
-function openLeague(targetRegion=region){
+async function openLeague(targetRegion=region){
  region=targetRegion;
  const alreadyChampion=!!state.leagues[region];
- if(!leagueUnlocked()&&!alreadyChampion){
+ const ready=units[region].every((_,i)=>state.arenas[region+"-"+i]);
+ if(!ready&&!alreadyChampion){
   alert(`Remporte les 8 arènes de ${regionName(region)} avant d’accéder à la Ligue.`);
-  return;
+  return false;
  }
  currentUnit=7;
- startBattle(true);
+ await startBattle(true);
+ return true;
 }
+async function startLeagueFallback(targetRegion){
+ region=targetRegion;
+ currentUnit=7;
+ const fallbackEnemy={
+   fr:{name:"dragonite",fr:"Dracolosse",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png"},
+   math:{name:"tyranitar",fr:"Tyranocif",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/248.png"},
+   ce2:{name:"metagross",fr:"Métalosse",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png"}
+ }[region];
+ let hero;
+ try{hero=await poke(state.partner||"pikachu")}
+ catch(e){hero={name:"pikachu",fr:"Pikachu",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"}}
+ battle={
+   arena:7,q:0,total:region==="ce2"?20:16,score:0,
+   heroHp:100,enemyHp:100,current:null,selected:null,
+   enemy:fallbackEnemy.name,league:true,used:[]
+ };
+ $("enemyImg").src=fallbackEnemy.img;
+ $("heroImg").src=hero.img;
+ $("enemyName").textContent=fallbackEnemy.fr;
+ $("heroName").textContent=hero.fr;
+ $("battleTitle").textContent=`Ligue finale – ${regionStudy(region)}`;
+ $("battleObjective").textContent=region==="ce2"
+   ?"Objectif : 15 bonnes réponses sur 20 • Toutes les questions seront posées"
+   :"Objectif : 10 bonnes réponses sur 16 • Toutes les questions seront posées";
+ openScreen("battle");
+ renderBattle();
+}
+
 const regionalDexCache={fr:null,math:null,ce2:null};
 
 async function loadRegionalDex(r){
@@ -1749,21 +1800,31 @@ async function updateArenaPokemonProgress(i){
 }
 
 async function startBattle(league){
- let enemyName=league
-   ? await chooseLeaguePokemon(region)
-   : await chooseArenaPokemon(region,currentUnit);
- let enemy=await poke(enemyName),hero=await poke(state.partner);
- battle={arena:currentUnit,q:0,total:league?(region==="ce2"?20:16):(region==="ce2"?[7,7,8,10,8,6,8,10][currentUnit]:5+currentUnit),score:0,heroHp:100,enemyHp:100,current:null,selected:null,enemy:enemy.name||enemyName,league,used:[]};
- $("enemyImg").src=enemy.img;
- $("heroImg").src=hero.img;
- $("enemyName").textContent=enemy.fr;
- $("heroName").textContent=hero.fr;
- $("battleTitle").textContent=league?`Ligue finale – ${regionStudy(region)}`:`Arène ${currentUnit+1} – ${units[region][currentUnit][0]}`;
- $("battleObjective").textContent=league
-   ? `Objectif : ${region==="ce2"?"15 bonnes réponses sur 20":"10 bonnes réponses sur 16"} • Toutes les questions seront posées`
-   : `Objectif : au moins ${Math.ceil(battle.total*.7)} bonnes réponses sur ${battle.total}`;
- openScreen("battle");
- renderBattle();
+ try{
+   let enemyName=league
+     ? await chooseLeaguePokemon(region)
+     : await chooseArenaPokemon(region,currentUnit);
+   if(!enemyName)throw new Error("Aucun Pokémon adverse disponible");
+   let enemy=await poke(enemyName),hero=await poke(state.partner||"pikachu");
+   battle={arena:currentUnit,q:0,total:league?(region==="ce2"?20:16):(region==="ce2"?[7,7,8,10,8,6,8,10][currentUnit]:5+currentUnit),score:0,heroHp:100,enemyHp:100,current:null,selected:null,enemy:enemy.name||enemyName,league,used:[]};
+   $("enemyImg").src=enemy.img;
+   $("heroImg").src=hero.img;
+   $("enemyName").textContent=enemy.fr;
+   $("heroName").textContent=hero.fr;
+   $("battleTitle").textContent=league?`Ligue finale – ${regionStudy(region)}`:`Arène ${currentUnit+1} – ${units[region][currentUnit][0]}`;
+   $("battleObjective").textContent=league
+     ? `Objectif : ${region==="ce2"?"15 bonnes réponses sur 20":"10 bonnes réponses sur 16"} • Toutes les questions seront posées`
+     : `Objectif : au moins ${Math.ceil(battle.total*.7)} bonnes réponses sur ${battle.total}`;
+   openScreen("battle");
+   renderBattle();
+ }catch(error){
+   console.error("Erreur startBattle",error);
+   if(league){
+     await startLeagueFallback(region);
+     return;
+   }
+   throw error;
+ }
 }
 function renderBattle(){battle.current=makeUniqueQuestion(battle.league?"mix":units[region][battle.arena][2],battle.arena,battle.used);battle.selected=null;$("battleNum").textContent=battle.q+1;$("battleTotal").textContent=battle.total;$("battleQuestion").textContent=battle.current.q;$("battleChoices").innerHTML=battle.current.choices.map(c=>`<button class="choice" onclick="selectBattle(this,'${String(c).replaceAll("'","\\'")}')">${c}</button>`).join("");$("battleFeedback").innerHTML="";$("battleValidate").classList.remove("hidden");$("battleNext").classList.add("hidden");updateHp();syncAutoReadControls();if(autoReadQuestions)setTimeout(speakBattle,360)}
 function selectBattle(el,v){battle.selected=v;document.querySelectorAll("#battleChoices .choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}

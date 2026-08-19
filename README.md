@@ -67,3 +67,20 @@ rejouable même si les huit indicateurs d’arène n’avaient pas tous été en
 
 Au chargement, PokéClasse remet également en cohérence les badges et arènes
 d’une région dont la Ligue a déjà été gagnée.
+
+## Version 1.5.6 — Bouton Ligue fiabilisé
+
+Le bouton d'accès rapide à la Ligue utilise maintenant un démarrage asynchrone
+sécurisé et affiche « Préparation de la Ligue… » dès le clic.
+
+Le démarrage est explicitement lié à la région affichée (Kanto, Johto ou Hoenn).
+
+Si PokéAPI ou le chargement d'un Pokémon adverse échoue, la Ligue démarre quand
+même avec un adversaire de secours. Une panne réseau ne peut donc plus donner
+l'impression que le bouton ne fonctionne pas.
+
+Les règles restent :
+- Kanto : 16 questions, victoire à 10/16 ;
+- Johto : 16 questions, victoire à 10/16 ;
+- Hoenn : 20 questions, victoire à 15/20 ;
+- toutes les questions de Ligue sont toujours posées.
