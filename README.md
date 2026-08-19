@@ -84,3 +84,62 @@ Les règles restent :
 - Johto : 16 questions, victoire à 10/16 ;
 - Hoenn : 20 questions, victoire à 15/20 ;
 - toutes les questions de Ligue sont toujours posées.
+
+## Version 1.5.7 — Test automatique Ligue Johto
+
+Un test automatique s'exécute après le chargement de l'application.
+
+Il vérifie précisément le scénario problématique :
+
+1. simulation d'une ancienne sauvegarde où la Ligue Johto est remportée mais où plusieurs arènes ne sont plus enregistrées ;
+2. relecture de cette sauvegarde depuis `localStorage`, comme après un rechargement de page ;
+3. exécution de la migration de compatibilité ;
+4. vérification que les 8 arènes Johto sont restaurées ;
+5. utilisation du vrai chemin `quickOpenLeague → openLeague` ;
+6. vérification que l'écran de combat s'ouvre en mode Ligue ;
+7. vérification que la Ligue Johto contient exactement 16 questions.
+
+Le chargement réseau de PokéAPI est remplacé uniquement pendant le test afin que le diagnostic vérifie le bouton et la navigation sans dépendre d'Internet.
+
+Le test restaure ensuite intégralement la sauvegarde et l'écran du joueur.
+
+Résultat disponible dans la console :
+`window.POKECLASSE_TEST_RESULTS.johto_league_button_legacy_save_reload`
+
+Un bouton **🧪 Tester la Ligue Johto** est aussi disponible dans l'écran Progrès.
+
+## Version 1.5.8 — Correction définitive Ligue Johto
+
+Le diagnostic a montré deux causes possibles :
+
+1. les anciennes versions pouvaient enregistrer un badge dans `state.badges` sans
+   conserver exactement le même état dans `state.arenas` ;
+2. le test automatique lancé 700 ms après l'ouverture de la page pouvait lui-même
+   modifier temporairement la navigation pendant que le joueur utilisait l'application.
+
+Corrections :
+- le test Johto ne s'exécute plus automatiquement pendant une partie ;
+- il reste disponible manuellement dans **Progrès → Tester la Ligue Johto** ;
+- les anciennes sauvegardes sont migrées dès le démarrage réel de l'application ;
+- un badge obtenu compte désormais comme une arène terminée même si l'ancien
+  indicateur `state.arenas` est absent ;
+- le bouton, la carte et la Ligue utilisent maintenant exactement la même fonction
+  de vérification ;
+- une Ligue déjà gagnée est toujours rejouable ;
+- le démarrage de la Ligue reste fonctionnel même si PokéAPI est momentanément indisponible.
+
+## Version 1.5.9 — Ligue Johto : chemin dédié
+
+Les deux boutons de Ligue de Johto (sur la carte et dans l'accès rapide)
+utilisent maintenant une fonction dédiée indépendante du lanceur générique.
+
+Quand Johto possède 8 badges ou que sa Ligue a déjà été gagnée :
+- le clic force explicitement la région `math` ;
+- le combat de Ligue démarre directement ;
+- il contient toujours 16 questions ;
+- l'objectif reste 10/16 ;
+- le chargement ne dépend pas du choix dynamique d'un adversaire via PokéAPI.
+
+Cette modification cible uniquement Johto afin de supprimer les conflits
+résiduels entre le changement de région, les anciennes sauvegardes et le
+lanceur générique de Ligue.

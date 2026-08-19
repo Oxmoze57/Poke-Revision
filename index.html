@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.5.6-ligue-bouton-fiable">
+  <meta name="pokeclasse-version" content="1.5.9-johto-ligue-forcee">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -1114,7 +1114,7 @@ main{max-width:1180px}
         <div id="regionArtwork" class="regionArtwork" aria-hidden="true"><img id="regionMapImage" alt="" draggable="false"></div>
         <svg id="routeLayer" class="routeLayer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
         <button class="mapSpecial school" onclick="openSchool()"><span class="specialIcon">🏫</span><span><b>ÉCOLE</b><small>des Dresseurs</small></span></button>
-        <button id="leagueNode" class="mapSpecial league locked" onclick="quickOpenLeague(this)"><span class="specialIcon">♛</span><span><b>LIGUE</b><small id="leagueStatus">Verrouillée</small></span></button>
+        <button id="leagueNode" class="mapSpecial league locked" onclick="region===\'math\'?openJohtoLeagueDirect(this):quickOpenLeague(this)"><span class="specialIcon">♛</span><span><b>LIGUE</b><small id="leagueStatus">Verrouillée</small></span></button>
         <div id="arenaNodes"></div>
 
         <div class="progressDock">
@@ -1130,7 +1130,7 @@ main{max-width:1180px}
       <div class="arenaQuickAccess">
         <div class="arenaQuickTitle"><span>Accès direct</span><small>Les 8 arènes et la Ligue restent accessibles depuis ce panneau.</small></div>
         <div id="arenaQuickNav" class="arenaQuickNav"></div>
-        <button id="leagueQuickButton" type="button" class="leagueQuickButton locked" onclick="quickOpenLeague(this)">
+        <button id="leagueQuickButton" type="button" class="leagueQuickButton locked" onclick="region===\'math\'?openJohtoLeagueDirect(this):quickOpenLeague(this)">
           <span class="leagueQuickIcon">🏆</span>
           <span><b>Ligue Pokémon</b><small id="leagueQuickStatus">8 badges requis</small></span>
           <span class="leagueQuickArrow">→</span>
@@ -1358,7 +1358,121 @@ function openScreen(id){
  if(id==="badgesScreen")renderBadges();
  if(id==="report")renderReport();
 }
-async function init(){try{await Promise.all(["pikachu","bulbasaur","charmander","squirtle"].map(poke));openScreen("intro");stats()}catch(e){$("loading").innerHTML="<h2>Connexion impossible</h2><p>PokéAPI n’a pas pu être chargée. Vérifie la connexion Internet puis recharge la page.</p>"}}
+
+const POKECLASSE_TEST_RESULTS={};
+
+function cloneGameState(value){
+ return JSON.parse(JSON.stringify(value));
+}
+
+async function runJohtoLeagueQuickAccessTest(){
+ const name="johto_league_button_legacy_save_reload";
+ const originalState=cloneGameState(state);
+ const originalRegion=region;
+ const originalStorage=localStorage.getItem("pokeClassV2");
+ const visibleScreen=[...document.querySelectorAll("main>section")].find(el=>!el.classList.contains("hidden"))?.id||"intro";
+ const originalStartBattle=startBattle;
+ let passed=false;
+ let failure=null;
+
+ try{
+   // 1. Simule une ancienne sauvegarde : la Ligue Johto a déjà été gagnée,
+   // mais seuls quelques drapeaux d'arènes existent encore.
+   const legacy=cloneGameState(originalState);
+   legacy.leagues=legacy.leagues||{};
+   legacy.arenas=legacy.arenas||{};
+   legacy.badges=legacy.badges||[];
+   legacy.leagues.math=true;
+   for(let i=0;i<8;i++){
+     if(i<4)legacy.arenas["math-"+i]=true;
+     else delete legacy.arenas["math-"+i];
+   }
+   legacy.badges=legacy.badges.filter(id=>!String(id).startsWith("math-"));
+   if(!legacy.badges.includes("league-math"))legacy.badges.push("league-math");
+   localStorage.setItem("pokeClassV2",JSON.stringify(legacy));
+
+   // 2. Simule le rechargement de la page en relisant localStorage.
+   state=Object.assign(
+     {xp:0,stars:0,badges:[],school:{},arenas:{},leagues:{},pokedex:{},captures:0,partner:"pikachu"},
+     JSON.parse(localStorage.getItem("pokeClassV2")||"{}")
+   );
+
+   // 3. Exécute la migration réellement utilisée par l'application.
+   migrateLeagueProgress();
+   const migrated=[0,1,2,3,4,5,6,7].every(i=>arenaCompleted("math",i));
+   if(!migrated)throw new Error("Migration Johto incomplète : les 8 arènes ne sont pas toutes restaurées.");
+
+   // 4. Remplace uniquement le chargement réseau du combat par un stub.
+   // Le chemin bouton -> quickOpenLeague -> openLeague reste le vrai code.
+   startBattle=async function(league){
+     if(!league)throw new Error("Le bouton n'a pas demandé une Ligue.");
+     battle={
+       arena:7,q:0,total:region==="ce2"?20:16,score:0,
+       heroHp:100,enemyHp:100,current:null,selected:null,
+       enemy:"test-johto",league:true,used:[]
+     };
+     openScreen("battle");
+   };
+
+   // 5. Reproduit le clic sur le bouton d'accès rapide après "rechargement".
+   region="math";
+   openScreen("map");
+   renderMap();
+   await quickOpenLeague(null);
+
+   if($("battle").classList.contains("hidden"))throw new Error("L'écran de combat ne s'est pas ouvert.");
+   if(!battle?.league)throw new Error("Le combat ouvert n'est pas une Ligue.");
+   if(region!=="math")throw new Error("La région active n'est plus Johto.");
+   if(battle.total!==16)throw new Error(`Nombre de questions incorrect : ${battle.total} au lieu de 16.`);
+
+   passed=true;
+ }catch(error){
+   failure=error;
+ }finally{
+   startBattle=originalStartBattle;
+
+   // Restaure exactement la sauvegarde et l'écran de l'utilisateur.
+   if(originalStorage===null)localStorage.removeItem("pokeClassV2");
+   else localStorage.setItem("pokeClassV2",originalStorage);
+   state=originalState;
+   region=originalRegion;
+
+   if(visibleScreen && $(visibleScreen))openScreen(visibleScreen);
+   else openScreen("intro");
+ }
+
+ const result={
+   passed,
+   message:passed
+     ?"OK — ancienne sauvegarde relue, migration Johto correcte, bouton Ligue ouvre un combat de 16 questions."
+     :(failure?.message||"Échec inconnu")
+ };
+ POKECLASSE_TEST_RESULTS[name]=result;
+ window.POKECLASSE_TEST_RESULTS=POKECLASSE_TEST_RESULTS;
+ if(passed)console.info("✅ Test automatique PokéClasse :",result.message);
+ else console.error("❌ Test automatique PokéClasse :",result.message);
+ return result;
+}
+
+async function runAutomaticTests(){
+ return runJohtoLeagueQuickAccessTest();
+}
+
+async function init(){
+ try{
+   // La sauvegarde doit être réparée AVANT tout calcul d'accès aux Ligues.
+   migrateLeagueProgress();
+   await Promise.all(["pikachu","bulbasaur","charmander","squirtle"].map(poke));
+   openScreen("intro");
+   stats();
+ }catch(e){
+   console.warn("Initialisation partielle",e);
+   // Même sans PokéAPI, la navigation et les Ligues doivent rester accessibles.
+   migrateLeagueProgress();
+   openScreen("intro");
+   stats();
+ }
+}
 
 
 const regionLabels={
@@ -1370,7 +1484,12 @@ function regionName(r){return regionLabels[r]?.name||r.toUpperCase()}
 function regionStudy(r){return regionLabels[r]?.study||"Révisions"}
 function allRegions(){return ["fr","math","ce2"]}
 
-function completedInRegion(r){return units[r].filter((_,i)=>state.arenas[r+"-"+i]).length}
+function arenaCompleted(r,i){
+ return !!state.arenas?.[r+"-"+i] || state.badges?.includes(r+"-"+i) || !!state.leagues?.[r];
+}
+function completedInRegion(r){
+ return units[r].filter((_,i)=>arenaCompleted(r,i)).length;
+}
 function nextUnitIndex(r){let i=units[r].findIndex((_,n)=>!state.arenas[r+"-"+n]);return i<0?7:i}
 async function renderHome(){
  stats();
@@ -1429,15 +1548,21 @@ function renderRegionHub(){
 }
 function chooseRegion(r){region=r;selectedArenaIndex=nextUnitIndex(r);openScreen("map")}
 function arenaUnlocked(i){return !!state.school[region+"-"+i]}
-function leagueUnlocked(){return units[region].every((_,i)=>state.arenas[region+"-"+i])}
+function leagueUnlocked(r=region){
+ return !!state.leagues?.[r] || units[r].every((_,i)=>arenaCompleted(r,i));
+}
 
 function migrateLeagueProgress(){
  ["fr","math","ce2"].forEach(r=>{
-   if(state.leagues?.[r]){
-     for(let i=0;i<8;i++){
-       state.arenas[r+"-"+i]=true;
-       const badgeId=r+"-"+i;
-       if(!state.badges.includes(badgeId))state.badges.push(badgeId);
+   state.arenas=state.arenas||{};
+   state.badges=state.badges||[];
+   state.leagues=state.leagues||{};
+   // Synchronise les deux anciennes façons d'enregistrer les badges.
+   for(let i=0;i<8;i++){
+     const id=r+"-"+i;
+     if(state.arenas[id] || state.badges.includes(id) || state.leagues[r]){
+       state.arenas[id]=true;
+       if(!state.badges.includes(id))state.badges.push(id);
      }
    }
  });
@@ -1489,28 +1614,62 @@ function renderRoute(){
 function renderLeagueQuickAccess(){
  const btn=$("leagueQuickButton"), status=$("leagueQuickStatus");
  if(!btn||!status)return;
- const won=!!state.leagues[region], ready=leagueUnlocked();
+ const won=!!state.leagues[region], ready=region==="math"?johtoLeagueReady():leagueUnlocked(region);
  btn.className="leagueQuickButton "+(won?"completed":ready?"ready":"locked");
  if(won){
    status.textContent="Ligue remportée • Cliquer pour rejouer";
    btn.title=`Rejouer la Ligue Pokémon de ${regionName(region)}`;
  }else if(ready){
-   status.textContent=region==="ce2"?"20 questions • objectif 15/20":"16 questions • objectif 10/16";
-   btn.title="Entrer dans la Ligue Pokémon";
+   status.textContent=region==="math"?"Johto • 16 questions • objectif 10/16":region==="ce2"?"20 questions • objectif 15/20":"16 questions • objectif 10/16";
+   btn.title=region==="math"?"Entrer dans la Ligue Pokémon de Johto":"Entrer dans la Ligue Pokémon";
  }else{
    const count=completedInRegion(region);
    status.textContent=`${count}/8 badges • ${8-count} restant${8-count>1?"s":""}`;
    btn.title="Obtiens les 8 badges pour débloquer la Ligue";
  }
 }
+
+function johtoLeagueReady(){
+ return !!state.leagues?.math || completedInRegion("math")>=8;
+}
+
+async function openJohtoLeagueDirect(button=null){
+ region="math";
+ if(!johtoLeagueReady()){
+   const count=completedInRegion("math");
+   alert(`La Ligue de Johto est encore verrouillée. Tu as ${count}/8 badges.`);
+   return false;
+ }
+ const oldText=button?button.innerHTML:"";
+ if(button){
+   button.disabled=true;
+   button.innerHTML='<span class="leagueQuickIcon">⏳</span><span><b>Ouverture de la Ligue Johto…</b><small>16 questions • objectif 10/16</small></span>';
+ }
+ try{
+   currentUnit=7;
+   // Chemin volontairement indépendant du bouton générique.
+   await startLeagueFallback("math");
+   return true;
+ }catch(error){
+   console.error("Erreur Ligue Johto directe",error);
+   alert("Impossible d’ouvrir la Ligue Johto.");
+   return false;
+ }finally{
+   if(button){
+     button.disabled=false;
+     if(oldText)button.innerHTML=oldText;
+   }
+ }
+}
+
 async function quickOpenLeague(button){
  const targetRegion=region;
- const alreadyChampion=!!state.leagues[targetRegion];
- const ready=units[targetRegion].every((_,i)=>state.arenas[targetRegion+"-"+i]);
- if(!ready&&!alreadyChampion){
-   const count=units[targetRegion].filter((_,i)=>state.arenas[targetRegion+"-"+i]).length;
+ if(targetRegion==="math")return openJohtoLeagueDirect(button);
+ const ready=leagueUnlocked(targetRegion);
+ if(!ready){
+   const count=completedInRegion(targetRegion);
    alert(`La Ligue est encore verrouillée. Il te faut les 8 badges de ${regionName(targetRegion)}. Tu en as actuellement ${count}/8.`);
-   return;
+   return false;
  }
  const oldText=button?button.innerHTML:"";
  if(button){
@@ -1519,15 +1678,15 @@ async function quickOpenLeague(button){
  }
  try{
    await openLeague(targetRegion);
+   return true;
  }catch(error){
    console.error("Erreur ouverture Ligue",error);
-   alert("La Ligue n’a pas pu démarrer correctement. Le jeu va utiliser un adversaire de secours.");
    await startLeagueFallback(targetRegion);
+   return true;
  }finally{
    if(button){
      button.disabled=false;
      button.innerHTML=oldText;
-     renderLeagueQuickAccess();
    }
  }
 }
@@ -1537,7 +1696,7 @@ function renderArenaQuickNav(){
  const box=$("arenaQuickNav");
  if(!box)return;
  box.innerHTML=units[region].map((u,i)=>{
-   const won=!!state.arenas[region+"-"+i],unlocked=arenaUnlocked(i),badge=data.badges[i];
+   const won=arenaCompleted(region,i),unlocked=arenaUnlocked(i),badge=data.badges[i];
    const status=won?"completed":unlocked?"available":"locked";
    return `<button type="button" class="arenaQuickButton ${status} ${i===selectedArenaIndex?"current":""}" title="${data.cities[i]} — ${u[0]}" onclick="selectArena(${i})"><span class="miniBadge">${won?"✓":badge[1]}</span>${i+1}</button>`;
  }).join("");
@@ -1557,7 +1716,7 @@ function renderMap(){
  const img=$("regionMapImage");img.src=data.image;img.alt=`Carte de ${meta.name}`;
  const pos=["n1","n2","n3","n4","n5","n6","n7","n8"];
  $("arenaNodes").innerHTML=units[region].map((u,i)=>{
-  const badge=data.badges[i],won=!!state.arenas[region+"-"+i],unlocked=arenaUnlocked(i),status=won?"completed":unlocked?"available":"locked";
+  const badge=data.badges[i],won=arenaCompleted(region,i),unlocked=arenaUnlocked(i),status=won?"completed":unlocked?"available":"locked";
   return `<button type="button" class="node ${pos[i]} ${badge[0]} ${status} ${i===selectedArenaIndex?"selected":""}" aria-label="Sélectionner l’arène de ${data.cities[i]}" onclick="selectArena(${i})"><span class="badgeGlyph">${won?"✓":badge[1]}</span><span class="nodeLabel">${data.cities[i]}</span></button>`;
  }).join("");
  renderArenaQuickNav();
@@ -1568,8 +1727,9 @@ function renderMap(){
  $("dockCount").textContent=`${wonCount}/8 badges`;
  $("dockNext").textContent=wonCount===8?"Ligue":`Arène ${Math.min(nextUnitIndex(region)+1,8)}`;
  $("dockBadges").innerHTML=data.badges.map((b,i)=>`<span class="dockBadge ${state.arenas[region+"-"+i]?"done":""} ${i===selectedArenaIndex?"current":""}">${state.arenas[region+"-"+i]?b[1]:i+1}</span>`).join("");
- $("leagueNode").classList.toggle("locked",!leagueUnlocked());
- $("leagueStatus").textContent=leagueUnlocked()?"Accessible":"8 badges requis";
+ const mapLeagueReady=region==="math"?johtoLeagueReady():leagueUnlocked(region);
+ $("leagueNode").classList.toggle("locked",!mapLeagueReady);
+ $("leagueStatus").textContent=mapLeagueReady?"Accessible":"8 badges requis";
  selectArena(Math.min(selectedArenaIndex,7),false);
 }
 function selectArena(i,rerender=true){
@@ -1699,10 +1859,8 @@ function openArena(i){
 async function startArenaBattle(){await startBattle(false)}
 async function openLeague(targetRegion=region){
  region=targetRegion;
- const alreadyChampion=!!state.leagues[region];
- const ready=units[region].every((_,i)=>state.arenas[region+"-"+i]);
- if(!ready&&!alreadyChampion){
-  alert(`Remporte les 8 arènes de ${regionName(region)} avant d’accéder à la Ligue.`);
+ if(!leagueUnlocked(targetRegion)){
+  alert(`Remporte les 8 arènes de ${regionName(targetRegion)} avant d’accéder à la Ligue.`);
   return false;
  }
  currentUnit=7;
@@ -1945,7 +2103,7 @@ function renderReport(){
    `<h3>${labels[r]}</h3>`+
    units[r].map((u,i)=>`<div class="unit ${state.arenas[r+"-"+i]?"done":""}"><b>${i+1}. ${u[0]}</b><br>École : ${state.school[r+"-"+i]?"✅":"❌"} • Arène : ${state.arenas[r+"-"+i]?"✅":"❌"}</div>`).join("")
   ).join("")+
-  `<div style="margin-top:15px"><button class="btn red" onclick="resetAll()">Réinitialiser</button></div>`;
+  `<div style="margin-top:15px"><button class="btn red" onclick="resetAll()">Réinitialiser</button><button class="btn ghost" onclick="runJohtoLeagueQuickAccessTest().then(r=>alert((r.passed?'✅ ':'❌ ')+r.message))">🧪 Tester la Ligue Johto</button></div>`;
 }
 
 const legendaryPools={
@@ -2536,7 +2694,7 @@ validateBattle=function(){
 const originalFinishBattle=finishBattle;
 finishBattle=function(){
  const wasLeague=battle?.league,score=battle?.score||0,total=battle?.total||1;
- const need=wasLeague?12:Math.ceil(total*.7),won=score>=need;
+ const need=wasLeague?(region==="ce2"?15:10):Math.ceil(total*.7),won=score>=need;
  originalFinishBattle();
  if(won)setTimeout(()=>victoryPop(wasLeague?"Ligue remportée !":"Badge remporté !"),220);
 };
