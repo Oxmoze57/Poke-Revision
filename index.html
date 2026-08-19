@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PokéClasse • Hoenn CE2 — Cartes esthétiques</title>
   <meta name="application-name" content="PokéClasse">
-  <meta name="pokeclasse-version" content="1.5.3-ligue-corrigee">
+  <meta name="pokeclasse-version" content="1.5.4-acces-rapide-ligue">
 <style>
 :root{
   --ink:#17324d;--blue:#3b82f6;--blue2:#0ea5e9;--green:#22c55e;--red:#ef4444;--yellow:#facc15;
@@ -938,6 +938,26 @@ main{max-width:1180px}
  background:#e8f6ff;border:2px solid #b8dff3;color:#174b69;font-size:.82rem;font-weight:900
 }
 
+
+.leagueQuickButton{
+  width:100%;margin-top:10px;padding:10px 12px;border-radius:14px;
+  display:flex;align-items:center;gap:10px;text-align:left;
+  border:2px solid #ffffff30;background:linear-gradient(135deg,#17324d,#285d7a);
+  color:#fff;box-shadow:0 8px 18px #0016;cursor:pointer;transition:.18s
+}
+.leagueQuickButton:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.leagueQuickButton .leagueQuickIcon{font-size:1.45rem}
+.leagueQuickButton b,.leagueQuickButton small{display:block}
+.leagueQuickButton small{font-size:.68rem;opacity:.8;margin-top:2px}
+.leagueQuickArrow{margin-left:auto;font-size:1.2rem;font-weight:900}
+.leagueQuickButton.locked{background:linear-gradient(135deg,#4b5563,#64748b);opacity:.78}
+.leagueQuickButton.ready{background:linear-gradient(135deg,#7c3aed,#f59e0b);border-color:#ffe27a;box-shadow:0 8px 22px #6d28d955}
+.leagueQuickButton.completed{background:linear-gradient(135deg,#0f766e,#22c55e);border-color:#b7f7ce}
+@media(max-width:620px){
+ .leagueQuickButton{padding:9px 10px}
+ .leagueQuickButton .leagueQuickIcon{font-size:1.2rem}
+}
+
 </style>
 </head>
 <body>
@@ -1105,8 +1125,13 @@ main{max-width:1180px}
     <aside class="arenaInspector adventureInspector">
       <div class="inspectorHeader"><span class="homeKicker">ARÈNE <b id="inspectorArenaNumber">1</b></span><span id="inspectorStep" class="inspectorStep">01 / 08</span></div>
       <div class="arenaQuickAccess">
-        <div class="arenaQuickTitle"><span>Accès direct</span><small>Les 8 arènes restent accessibles même si un marqueur est difficile à toucher sur la carte.</small></div>
+        <div class="arenaQuickTitle"><span>Accès direct</span><small>Les 8 arènes et la Ligue restent accessibles depuis ce panneau.</small></div>
         <div id="arenaQuickNav" class="arenaQuickNav"></div>
+        <button id="leagueQuickButton" type="button" class="leagueQuickButton locked" onclick="quickOpenLeague()">
+          <span class="leagueQuickIcon">🏆</span>
+          <span><b>Ligue Pokémon</b><small id="leagueQuickStatus">8 badges requis</small></span>
+          <span class="leagueQuickArrow">→</span>
+        </button>
       </div>
       <div class="inspectorHero">
         <div id="inspectorBadge" class="inspectorBadge">◆</div>
@@ -1444,6 +1469,32 @@ function renderRoute(){
  const d=pts.map((p,i)=>(i?"L":"M")+p[0]+" "+p[1]).join(" ");
  $("routeLayer").innerHTML=`<path class="routeShadow" d="${d}"/><path class="routePath" d="${d}"/>`;
 }
+function renderLeagueQuickAccess(){
+ const btn=$("leagueQuickButton"), status=$("leagueQuickStatus");
+ if(!btn||!status)return;
+ const won=!!state.leagues[region], ready=leagueUnlocked();
+ btn.className="leagueQuickButton "+(won?"completed":ready?"ready":"locked");
+ if(won){
+   status.textContent="Ligue remportée • Rejouable";
+   btn.title="Rejouer la Ligue Pokémon";
+ }else if(ready){
+   status.textContent=region==="ce2"?"20 questions • objectif 15/20":"16 questions • objectif 10/16";
+   btn.title="Entrer dans la Ligue Pokémon";
+ }else{
+   const count=completedInRegion(region);
+   status.textContent=`${count}/8 badges • ${8-count} restant${8-count>1?"s":""}`;
+   btn.title="Obtiens les 8 badges pour débloquer la Ligue";
+ }
+}
+function quickOpenLeague(){
+ if(!leagueUnlocked()){
+   const count=completedInRegion(region);
+   alert(`La Ligue est encore verrouillée. Il te faut les 8 badges de ${regionName(region)}. Tu en as actuellement ${count}/8.`);
+   return;
+ }
+ openLeague();
+}
+
 function renderArenaQuickNav(){
  const data=regionMapData[region];
  const box=$("arenaQuickNav");
@@ -1473,6 +1524,7 @@ function renderMap(){
   return `<button type="button" class="node ${pos[i]} ${badge[0]} ${status} ${i===selectedArenaIndex?"selected":""}" aria-label="Sélectionner l’arène de ${data.cities[i]}" onclick="selectArena(${i})"><span class="badgeGlyph">${won?"✓":badge[1]}</span><span class="nodeLabel">${data.cities[i]}</span></button>`;
  }).join("");
  renderArenaQuickNav();
+ renderLeagueQuickAccess();
  renderRoute();
  const wonCount=completedInRegion(region);
  $("mapProgressText").textContent=`${wonCount} / 8 badges`;
@@ -1595,7 +1647,7 @@ function startTraining(){train={q:0,score:0,current:null,selected:null,used:[]};
 function renderTraining(){train.current=makeUniqueQuestion(units[region][currentUnit][2],0,train.used);train.selected=null;$("trainNum").textContent=train.q+1;$("trainScore").textContent=train.score;$("trainProgress").style.width=(train.q/5*100)+"%";$("trainQuestion").textContent=train.current.q;$("trainChoices").innerHTML=train.current.choices.map(c=>`<button class="choice" onclick="selectTrain(this,'${String(c).replaceAll("'","\\'")}')">${c}</button>`).join("");$("trainFeedback").innerHTML="";$("trainValidate").classList.remove("hidden");$("trainNext").classList.add("hidden");syncAutoReadControls();if(autoReadQuestions)setTimeout(speakTraining,320)}
 function selectTrain(el,v){train.selected=v;document.querySelectorAll("#trainChoices .choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel")}
 function validateTraining(){if(train.selected===null){alert("Choisis une réponse.");return}let ok=String(train.selected)===String(train.current.a);if(ok)train.score++;$("trainScore").textContent=train.score;$("trainFeedback").className="feedback "+(ok?"ok":"ko");$("trainFeedback").innerHTML=(ok?"✅ Bonne réponse ! ":"❌ Bonne réponse : <b>"+train.current.a+"</b>. ")+train.current.ex+(train.current.steps?`<div class="correction">${train.current.steps}</div>`:"");$("trainValidate").classList.add("hidden");$("trainNext").classList.remove("hidden")}
-function nextTraining(){train.q++;if(train.q<5)return renderTraining();let passed=train.score>=4;if(passed){state.school[region+"-"+currentUnit]=true;state.xp+=30;state.stars+=train.score;save();renderArenaQuickNav();alert("Entraînement réussi ! L’arène correspondante est débloquée.")}else alert("Il faut au moins 4/5. Relis la leçon puis recommence.");openSchool()}
+function nextTraining(){train.q++;if(train.q<5)return renderTraining();let passed=train.score>=4;if(passed){state.school[region+"-"+currentUnit]=true;state.xp+=30;state.stars+=train.score;save();renderArenaQuickNav();renderLeagueQuickAccess();alert("Entraînement réussi ! L’arène correspondante est débloquée.")}else alert("Il faut au moins 4/5. Relis la leçon puis recommence.");openSchool()}
 function openArena(i){
  if(!arenaUnlocked(i)){
   alert("Cette arène est encore verrouillée. Ouvre l’École des Dresseurs, choisis l’unité correspondante et réussis son entraînement pour la débloquer.");

@@ -46,3 +46,13 @@ Le combat de Ligue ne peut plus se terminer avant que toutes les questions aient
 - Les barres de PV pendant une Ligue sont désormais visuelles et ne provoquent plus une fin prématurée.
 - L’objectif est affiché clairement sous le titre du combat.
 - Les arènes normales conservent leur fonctionnement actuel.
+
+## Version 1.5.4 — Accès rapide à la Ligue
+
+Le panneau d’accès direct de chaque région contient maintenant un bouton **Ligue Pokémon** juste sous les 8 arènes.
+
+- Tant que les 8 badges ne sont pas obtenus, le bouton indique le nombre de badges manquants.
+- Dès que les 8 badges sont obtenus, le bouton devient actif.
+- Kanto et Johto affichent clairement : **16 questions • objectif 10/16**.
+- Hoenn affiche : **20 questions • objectif 15/20**.
+- Une Ligue déjà remportée reste accessible et rejouable depuis ce même bouton.

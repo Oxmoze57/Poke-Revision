@@ -1,3 +1,1 @@
-PokéClasse 1.5.3 — Correction des Ligues Pokémon
-Kanto/Johto : 16 questions complètes, objectif 10/16.
-Hoenn : 20 questions complètes, objectif 15/20.
+PokéClasse 1.5.4 — Accès rapide à la Ligue Pokémon
